@@ -1,0 +1,41 @@
+<idea-plugin version="2">
+    <id>com.tobszarny.activetabhighlighter.plugin.id</id>
+    <name>Active Intellij Tab Highlighter</name>
+    <version>1.0</version>
+    <vendor email="support@yourcompany.com" url="https://github.com/tobszarny">tobszarny</vendor>
+
+    <description><![CDATA[
+     Active Intellij Tab Highlighter Plugin.
+    ]]></description>
+
+    <change-notes><![CDATA[
+
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="145.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <editorTabColorProvider
+                implementation="com.tobszarn.intellij.plugin.activetabhighlighter.CustomEditorTabColorProvider"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+    <application-components>
+        <component>
+            <implementation-class>com.tobszarn.intellij.plugin.activetabhighlighter.ActiveTabsHighlighterComponent
+            </implementation-class>
+        </component>
+    </application-components>
+</idea-plugin>
