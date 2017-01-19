@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.tobszarny.activetabhighlighter.plugin.id</id>
     <name>Active Intellij Tab Highlighter</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <vendor email="support@yourcompany.com" url="https://github.com/tobszarny">tobszarny</vendor>
 
     <description><![CDATA[
