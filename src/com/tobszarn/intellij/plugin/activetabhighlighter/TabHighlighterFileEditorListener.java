@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.tobszarn.intellij.plugin.activetabhighlighter.CustomEditorTabColorProvider.HIGHLIGHTED_TAB_BG_COLOUR;
 
 /**
- * TODO: Add description
+ * File Editor Listener implemantetion for tab highlight
  * Created by Tomasz Obszarny on 19.01.2017.
  */
 public class TabHighlighterFileEditorListener implements FileEditorManagerListener {
