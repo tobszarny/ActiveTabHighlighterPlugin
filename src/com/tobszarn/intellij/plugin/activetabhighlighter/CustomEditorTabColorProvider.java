@@ -27,16 +27,17 @@ public class CustomEditorTabColorProvider implements EditorTabColorProvider {
     @Override
     public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         final FileEditorManagerEx fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project);
-        EditorWindow activeWindow = fileEditorManagerEx.getCurrentWindow();
-        final EditorWithProviderComposite selectedEditor = activeWindow.getSelectedEditor();
-
         FileColorManager fileColorManager = FileColorManager.getInstance(project);
 
-        if (selectedEditor != null && selectedEditor.getFile() != null && selectedEditor.getFile().equals(virtualFile)) {
-            logger.warn(virtualFile.getCanonicalPath());
-            return HIGHLIGHTED_TAB_BG_COLOUR;
-        } else {
-            return fileColorManager.getFileColor(virtualFile);
+        EditorWindow activeWindow = fileEditorManagerEx.getCurrentWindow();
+        if (activeWindow != null) {
+            final EditorWithProviderComposite selectedEditor = activeWindow.getSelectedEditor();
+
+            if (selectedEditor != null && selectedEditor.getFile() != null && selectedEditor.getFile().equals(virtualFile)) {
+                return HIGHLIGHTED_TAB_BG_COLOUR;
+            }
         }
+
+        return fileColorManager.getFileColor(virtualFile);
     }
 }
