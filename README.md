@@ -12,7 +12,7 @@ What is it:
 
 Installation instructions:
 1. Download the latest release jar from github.com/tobszarny/ActiveTabHighlighterPlugin/releases
-2. In IntelliJ go to File>Settings, click Plugins from the side tree.
+2. In IntelliJ, go to File>Settings, click Plugins from the side tree.
 3. Click "Install plugin from disk" and point the downloaded jar.
 
     
