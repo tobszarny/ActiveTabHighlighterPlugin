@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.tobszarny.activetabhighlighter.plugin.id</id>
     <name>Active Intellij Tab Highlighter</name>
-    <version>1.1</version>
+    <version>1.2</version>
     <vendor email="support@yourcompany.com" url="https://github.com/tobszarny">tobszarny</vendor>
 
     <description><![CDATA[
@@ -21,6 +21,7 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
+    <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
@@ -34,14 +35,6 @@
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
-        <!--<action id="activetabhighlighter.OpenSettings"-->
-        <!--class="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsAction"-->
-        <!--text="Open ActiveTabsHighlighter settings"-->
-        <!--description="Open ActiveTabsHighlighter settings">-->
-        <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
-        <!--&lt;!&ndash;<keyboard-shortcut keymap="$default" first-keystroke="shift meta alt R" second-keystroke="shift ctrl meta R"/>&ndash;&gt;-->
-        <!--</action>-->
     </actions>
 
     <application-components>
