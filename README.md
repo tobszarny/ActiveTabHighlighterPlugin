@@ -1,14 +1,13 @@
 # ActiveTabHighlighterPlugin
 
 What it is not:
-- versatile, color customizable plugin
 - best implementation you ever saw
 
 What is it:
 - minimum implementation plugin
 - gets the job of distinct highlight of active tab done (I'm personally using Darcula theme, and this has been 
     a nightmare for me for quite a while, to see the active tab, amongst the others)
-- yes, the highlight colour is somewhat pink, and I'm fine with it :)
+- yes, the highlight colour is somewhat pink by default, now you can change it in Settings\Tools\Active Tab Highlighter Plugin
 
 Installation instructions:
 - Download the latest release jar from https://github.com/tobszarny/ActiveTabHighlighterPlugin/releases
