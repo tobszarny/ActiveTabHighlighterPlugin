@@ -19,22 +19,21 @@ import java.awt.*;
  */
 public class CustomEditorTabColorProvider implements EditorTabColorProvider {
 
-    private static final Logger logger = Logger.getInstance(CustomEditorTabColorProvider.class);
-
-    public static final Color HIGHLIGHTED_TAB_BG_COLOUR = new Color(173, 46, 156);
+    private static final Logger LOGGER = Logger.getInstance(CustomEditorTabColorProvider.class);
 
     @Nullable
     @Override
     public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         final FileEditorManagerEx fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project);
         FileColorManager fileColorManager = FileColorManager.getInstance(project);
+        HighlighterSettingsConfig highlighterSettingsConfig = HighlighterSettingsConfig.getInstance(project);
 
         EditorWindow activeWindow = fileEditorManagerEx.getCurrentWindow();
         if (activeWindow != null) {
             final EditorWithProviderComposite selectedEditor = activeWindow.getSelectedEditor();
 
             if (selectedEditor != null && selectedEditor.getFile() != null && selectedEditor.getFile().equals(virtualFile)) {
-                return HIGHLIGHTED_TAB_BG_COLOUR;
+                return highlighterSettingsConfig.buildHighlightColor();
             }
         }
 

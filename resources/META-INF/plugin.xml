@@ -26,10 +26,22 @@
         <!-- Add your extensions here -->
         <editorTabColorProvider
                 implementation="com.tobszarn.intellij.plugin.activetabhighlighter.CustomEditorTabColorProvider"/>
+        <projectConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
+                             id="preference.HighlighterSettingsConfigurable"
+                             instance="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsConfigurable"/>
+        <projectService serviceInterface="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"
+                        serviceImplementation="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
+        <!--<action id="activetabhighlighter.OpenSettings"-->
+        <!--class="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsAction"-->
+        <!--text="Open ActiveTabsHighlighter settings"-->
+        <!--description="Open ActiveTabsHighlighter settings">-->
+        <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
+        <!--&lt;!&ndash;<keyboard-shortcut keymap="$default" first-keystroke="shift meta alt R" second-keystroke="shift ctrl meta R"/>&ndash;&gt;-->
+        <!--</action>-->
     </actions>
 
     <application-components>
