@@ -6,10 +6,13 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
+import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 /**
  * File Editor Listener implementation for tab highlight
@@ -31,26 +34,49 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
     public void selectionChanged(@NotNull FileEditorManagerEvent fileEditorManagerEvent) {
         final Project project = fileEditorManagerEvent.getManager().getProject();
         final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
-        FileColorManager fileColorManager = FileColorManager.getInstance(project);
-        HighlighterSettingsConfig highlighterSettingsConfig = HighlighterSettingsConfig.getInstance(project);
+        final FileColorManager fileColorManager = FileColorManager.getInstance(project);
+        final HighlighterSettingsConfig highlighterSettingsConfig = HighlighterSettingsConfig.getInstance(project);
 
         final VirtualFile oldFile = fileEditorManagerEvent.getOldFile();
         final VirtualFile newFile = fileEditorManagerEvent.getNewFile();
 
         for (EditorWindow editorWindow : manager.getWindows()) {
-            if (null != oldFile) {
-                final int index = editorWindow.findEditorIndex(editorWindow.findFileComposite(oldFile));
-                if (index >= 0) {
-                    editorWindow.getTabbedPane().setBackgroundColorAt(index, fileColorManager.getFileColor(oldFile));
-                }
-            }
+            setUnfocusedTabWithColorManagerDefaultColor(fileColorManager, oldFile, editorWindow);
 
-            if (null != newFile) {
-                final int index = editorWindow.findEditorIndex(editorWindow.findFileComposite(newFile));
-                if (index >= 0) {
-                    editorWindow.getTabbedPane().setBackgroundColorAt(index, highlighterSettingsConfig.buildHighlightColor());
-                }
+            setFocusedTabHighlighterColor(highlighterSettingsConfig, newFile, editorWindow);
+        }
+    }
+
+    private void setFocusedTabHighlighterColor(@NotNull HighlighterSettingsConfig highlighterSettingsConfig, VirtualFile file, EditorWindow editorWindow) {
+        if (null != file) {
+            setTabColor(highlighterSettingsConfig.buildHighlightColor(), file, editorWindow);
+        }
+    }
+
+    private void setUnfocusedTabWithColorManagerDefaultColor(@NotNull FileColorManager fileColorManager, VirtualFile file, EditorWindow editorWindow) {
+        if (null != file) {
+            setTabColor(fileColorManager.getFileColor(file), file, editorWindow);
+        }
+    }
+
+    private void setTabColor(Color color, @NotNull VirtualFile file, @NotNull EditorWindow editorWindow) {
+        final EditorWithProviderComposite fileComposite = editorWindow.findFileComposite(file);
+
+        final int index = getEditorIndex(editorWindow, fileComposite);
+        if (index >= 0) {
+            editorWindow.getTabbedPane().getTabs().getTabAt(index).setTabColor(color);
+        }
+    }
+
+    private int getEditorIndex(@NotNull EditorWindow editorWindow, EditorWithProviderComposite fileComposite) {
+        int index = -1;
+        for (EditorWithProviderComposite editorWithProviderComposite : editorWindow.getEditors()) {
+            index++;
+            if (editorWithProviderComposite.equals(fileComposite)) {
+                break;
             }
         }
+
+        return index;
     }
 }
