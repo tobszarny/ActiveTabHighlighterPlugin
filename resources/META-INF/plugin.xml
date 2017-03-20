@@ -10,10 +10,6 @@
 
     <change-notes><![CDATA[
             <html>
-               <b>Changes in version 1.4:</b>
-               <ul>
-                 <li>TODO:</li>
-               </ul>
                <b>Changes in version 1.3:</b>
                <ul>
                  <li>Fixed IDEA Platform 2017.X compatibility <a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/4">tobszarny/ActiveTabHighlighterPlugin#4</a></li>
