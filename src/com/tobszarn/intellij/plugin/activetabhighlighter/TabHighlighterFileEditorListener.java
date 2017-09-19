@@ -64,7 +64,9 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
 
         final int index = getEditorIndex(editorWindow, fileComposite);
         if (index >= 0) {
-            editorWindow.getTabbedPane().getTabs().getTabAt(index).setTabColor(color);
+            if (editorWindow.getTabbedPane() != null) { //Distraction free mode // Presentation mode
+                editorWindow.getTabbedPane().getTabs().getTabAt(index).setTabColor(color);
+            }
         }
     }
 
