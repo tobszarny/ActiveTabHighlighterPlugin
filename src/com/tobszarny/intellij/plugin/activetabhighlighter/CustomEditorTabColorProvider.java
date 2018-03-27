@@ -1,4 +1,4 @@
-package com.tobszarn.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
@@ -33,7 +33,7 @@ public class CustomEditorTabColorProvider implements EditorTabColorProvider {
             final EditorWithProviderComposite selectedEditor = activeWindow.getSelectedEditor();
 
             if (selectedEditor != null && selectedEditor.getFile() != null && selectedEditor.getFile().equals(virtualFile)) {
-                return highlighterSettingsConfig.buildHighlightColor();
+                return highlighterSettingsConfig.getBackgroundColor();
             }
         }
 

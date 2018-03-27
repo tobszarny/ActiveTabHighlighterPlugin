@@ -1,4 +1,4 @@
-package com.tobszarn.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -12,13 +12,13 @@ import org.jetbrains.annotations.NotNull;
  * Main application ActiveTabsHighlighter component
  * Created by Tomasz Obszarny on 19.01.2017.
  */
-public class ActiveTabsHighlighterComponent implements ApplicationComponent {
+public class ActiveTabHighlighterComponent implements ApplicationComponent {
 
-    private static final Logger logger = Logger.getInstance(ActiveTabsHighlighterComponent.class);
+    private static final Logger logger = Logger.getInstance(ActiveTabHighlighterComponent.class);
 
     private MessageBusConnection connection;
 
-    public ActiveTabsHighlighterComponent() {
+    public ActiveTabHighlighterComponent() {
     }
 
     @Override
@@ -38,6 +38,6 @@ public class ActiveTabsHighlighterComponent implements ApplicationComponent {
     @Override
     @NotNull
     public String getComponentName() {
-        return "com.tobszarn.intellij.plugin.activetabhighlighter.ActiveTabsHighlighterComponent";
+        return "com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterComponent";
     }
 }

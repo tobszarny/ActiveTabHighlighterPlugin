@@ -1,0 +1,1 @@
+package com.tobszarny.intellij.plugin.activetabhighlighter;

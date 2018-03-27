@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.tobszarny.activetabhighlighter.plugin.id</id>
     <name>Active Intellij Tab Highlighter</name>
-    <version>1.3.1</version>
+    <version>1.3.2</version>
     <vendor email="tomasz.obszarny.ga@gmail.com" url="https://github.com/tobszarny">tobszarny</vendor>
 
     <description><![CDATA[
@@ -40,12 +40,12 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <editorTabColorProvider
-                implementation="com.tobszarn.intellij.plugin.activetabhighlighter.CustomEditorTabColorProvider"/>
+                implementation="com.tobszarny.intellij.plugin.activetabhighlighter.CustomEditorTabColorProvider"/>
         <projectConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
                              id="preference.HighlighterSettingsConfigurable"
-                             instance="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsConfigurable"/>
-        <projectService serviceInterface="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"
-                        serviceImplementation="com.tobszarn.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"/>
+                             instance="com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfigurable"/>
+        <projectService serviceInterface="com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"
+                        serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"/>
     </extensions>
 
     <actions>
@@ -53,7 +53,7 @@
 
     <application-components>
         <component>
-            <implementation-class>com.tobszarn.intellij.plugin.activetabhighlighter.ActiveTabsHighlighterComponent
+            <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterComponent
             </implementation-class>
         </component>
     </application-components>

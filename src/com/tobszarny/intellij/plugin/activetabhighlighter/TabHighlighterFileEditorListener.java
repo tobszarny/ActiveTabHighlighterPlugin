@@ -1,4 +1,4 @@
-package com.tobszarn.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -49,7 +49,7 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
 
     private void setFocusedTabHighlighterColor(@NotNull HighlighterSettingsConfig highlighterSettingsConfig, VirtualFile file, EditorWindow editorWindow) {
         if (null != file) {
-            setTabColor(highlighterSettingsConfig.buildHighlightColor(), file, editorWindow);
+            setTabColor(highlighterSettingsConfig.getBackgroundColor(), file, editorWindow);
         }
     }
 
