@@ -16,13 +16,13 @@ import java.awt.*;
         storages = {
                 @Storage(value = "active-tab-highlighter.xml")
         }, additionalExportFile = "active-tab-highlighter")
-public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.State>, Disposable, ApplicationComponent {
+public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState>, Disposable, ApplicationComponent {
 
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
     private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsConfig.class);
     public HighlightedTabTextAttributesDescription attributesDescription;
-    State state;
+    PersistentState persistentState;
     private Color backgroundColor;
 
     public HighlighterSettingsConfig() {
@@ -37,11 +37,12 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     public void setDefaults() {
         LOGGER.info("*****setDefaults() ");
-        state = new State();
-        state.red = 173;
-        state.green = 46;
-        state.blue = 156;
-        backgroundColor = new Color(state.red, state.green, state.blue);
+        persistentState = new PersistentState();
+        persistentState.background.enabled = true;
+        persistentState.background.red = 173;
+        persistentState.background.green = 46;
+        persistentState.background.blue = 156;
+        backgroundColor = persistentState.getBackgroundColor();
         TextAttributes attributes = new TextAttributes();
         attributes.setBackgroundColor(backgroundColor);
         TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(EXTERNAL_ID);
@@ -50,48 +51,58 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     @Nullable
     @Override
-    public HighlighterSettingsConfig.State getState() {
-        return state;
+    public PersistentState getState() {
+        return persistentState;
     }
 
     @Override
-    public void loadState(HighlighterSettingsConfig.State state) {
-        LOGGER.info("*****LOADING " + state);
-        XmlSerializerUtil.copyBean(state, this.state);
-        backgroundColor = new Color(state.red, state.green, state.blue);
-        updateAttributesBackgroundColor(backgroundColor);
+    public void loadState(PersistentState persistentState) {
+        LOGGER.info("*****LOADING " + persistentState);
+        XmlSerializerUtil.copyBean(persistentState, this.persistentState);
+        backgroundColor = persistentState.getBackgroundColor();
+        updateAttributes(persistentState);
     }
 
     private void rebuildHighlightColorIfNecessary() {
-        LOGGER.info("*****REBUILDING COLOUR  " + state + " vs " + backgroundColor);
+        LOGGER.info("*****REBUILDING COLOUR  " + persistentState + " vs " + backgroundColor);
         LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getBackgroundColor());
         if (backgroundColor != null) {
-            if (!state.red.equals(backgroundColor.getRed()) || !state.green.equals(backgroundColor.getGreen()) || !state.blue.equals(backgroundColor.getBlue())) {
-                LOGGER.info("*****REBUILDING " + state);
-                backgroundColor = new Color(state.red, state.green, state.blue);
-                updateAttributesBackgroundColor(backgroundColor);
+            if (persistentState.isBackgroundColorDifferentThan(backgroundColor)) {
+                LOGGER.info("*****REBUILDING " + persistentState);
+                backgroundColor = persistentState.getBackgroundColor();
+                updateAttributes(persistentState);
             }
         }
     }
 
+    public boolean isBackgroundColorUsed() {
+        return persistentState.isBackgroundColorUsed();
+
+    }
+
     public Color getBackgroundColor() {
+        LOGGER.info("*****getBackgroundColor  " + backgroundColor);
         rebuildHighlightColorIfNecessary();
         return backgroundColor;
     }
 
-    public void storeBackgroundColor(Color backgroundColor) {
-        LOGGER.info("*****SAVE " + backgroundColor);
-        this.backgroundColor = backgroundColor;
-        this.state.red = backgroundColor.getRed();
-        this.state.green = backgroundColor.getGreen();
-        this.state.blue = backgroundColor.getBlue();
+    public void storeBackgroundColorInformation(boolean enabled, Color color) {
+        LOGGER.info("*****SAVE " + enabled + " " + color);
+        this.persistentState.storeBackgroundColorInformation(enabled, color);
 
-        updateAttributesBackgroundColor(backgroundColor);
+        updateAttributesBackgroundColor(enabled, color);
     }
 
-    private void updateAttributesBackgroundColor(Color backgroundColor) {
-        LOGGER.info("*****UPDATE BG COLOR " + backgroundColor);
-        attributesDescription.setBackgroundColor(backgroundColor);
+    private void updateAttributes(PersistentState state) {
+        LOGGER.info("*****updateAttributes(" + state + ")");
+        attributesDescription.setBackgroundColor(state.getBackgroundColor());
+        attributesDescription.setBackgroundChecked(state.isBackgroundColorUsed());
+    }
+
+    private void updateAttributesBackgroundColor(boolean enabled, Color color) {
+        LOGGER.info("*****UPDATE BG COLOR " + enabled + "" + color);
+        attributesDescription.setBackgroundColor(color);
+        attributesDescription.setBackgroundChecked(enabled);
     }
 
     public HighlightedTabTextAttributesDescription getAttributesDescription() {
@@ -109,16 +120,73 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
         return "com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig";
     }
 
-    static class State {
+    static class PersistentState {
 
+        public PersistentColor background;
+        public PersistentColor foreground;
+
+        public PersistentState() {
+            background = new PersistentColor();
+            foreground = new PersistentColor();
+        }
+
+        public Color getBackgroundColor() {
+            return background.getColor();
+        }
+
+        public Color getForegroundColor() {
+            return foreground.getColor();
+        }
+
+        public void storeBackgroundColorInformation(boolean enabled, Color color) {
+            background.enabled = enabled;
+            if (enabled) {
+                if (color == null) {
+                    throw new NullPointerException("Color cannot be null when enabled");
+                } else {
+                    background.red = color.getRed();
+                    background.green = color.getGreen();
+                    background.blue = color.getBlue();
+                }
+            }
+        }
+
+        public boolean isBackgroundColorDifferentThan(Color color) {
+            return !background.red.equals(color.getRed()) || !background.green.equals(color.getGreen()) || !background.blue.equals(color.getBlue());
+        }
+
+        @Override
+        public String toString() {
+            return "PersistentState{" +
+                    "background=" + background +
+                    ", foreground=" + foreground +
+                    '}';
+        }
+
+        public boolean isBackgroundColorUsed() {
+            return background.enabled;
+        }
+    }
+
+    static class PersistentColor {
+        public boolean enabled = false;
         public Integer red;
         public Integer green;
         public Integer blue;
 
+        public Color getColor() {
+            if (!enabled) {
+                return null;
+            } else {
+                return new Color(red, green, blue);
+            }
+        }
+
         @Override
         public String toString() {
-            return "State{" +
-                    "red=" + red +
+            return "PersistentColor{" +
+                    (enabled ? "enabled" : "disabled") +
+                    ", red=" + red +
                     ", green=" + green +
                     ", blue=" + blue +
                     '}';

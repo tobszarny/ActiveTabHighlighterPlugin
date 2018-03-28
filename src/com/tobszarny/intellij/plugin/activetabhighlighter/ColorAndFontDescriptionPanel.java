@@ -316,8 +316,16 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
         myDispatcher.addListener(listener);
     }
 
+    public boolean isBackgroundColorEnabled() {
+        return myCbBackground.isSelected();
+    }
+
+    public boolean isForegroundColorEnabled() {
+        return myCbForeground.isSelected();
+    }
+
     public Color getSelectedBackgroundColor() {
-        return myBackgroundChooser.isEnabled() ? myBackgroundChooser.getSelectedColor() : null;
+        return myCbBackground.isSelected() ? myBackgroundChooser.getSelectedColor() : null;
     }
 
 }
