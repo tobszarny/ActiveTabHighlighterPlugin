@@ -35,7 +35,7 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
         final Project project = fileEditorManagerEvent.getManager().getProject();
         final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
         final FileColorManager fileColorManager = FileColorManager.getInstance(project);
-        final HighlighterSettingsConfig highlighterSettingsConfig = HighlighterSettingsConfig.getInstance(project);
+        final HighlighterSettingsConfig highlighterSettingsConfig = HighlighterSettingsConfig.getInstance();
 
         final VirtualFile oldFile = fileEditorManagerEvent.getOldFile();
         final VirtualFile newFile = fileEditorManagerEvent.getNewFile();

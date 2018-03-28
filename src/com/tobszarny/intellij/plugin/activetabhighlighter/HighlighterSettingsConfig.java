@@ -1,15 +1,13 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -17,8 +15,8 @@ import java.awt.*;
 @State(name = "ActiveTabHighlighterConfiguration",
         storages = {
                 @Storage(value = "active-tab-highlighter.xml")
-        })
-public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.State> {
+        }, additionalExportFile = "active-tab-highlighter")
+public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.State>, Disposable, ApplicationComponent {
 
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
@@ -28,6 +26,17 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     private Color backgroundColor;
 
     public HighlighterSettingsConfig() {
+        setDefaults();
+    }
+
+    @Nullable
+    public static HighlighterSettingsConfig getInstance() {
+        HighlighterSettingsConfig sfec = ServiceManager.getService(HighlighterSettingsConfig.class);
+        return sfec;
+    }
+
+    public void setDefaults() {
+        LOGGER.info("*****setDefaults() ");
         state = new State();
         state.red = 173;
         state.green = 46;
@@ -40,12 +49,6 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     }
 
     @Nullable
-    public static HighlighterSettingsConfig getInstance(Project project) {
-        HighlighterSettingsConfig sfec = ServiceManager.getService(project, HighlighterSettingsConfig.class);
-        return sfec;
-    }
-
-    @Nullable
     @Override
     public HighlighterSettingsConfig.State getState() {
         return state;
@@ -55,12 +58,13 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     public void loadState(HighlighterSettingsConfig.State state) {
         LOGGER.info("*****LOADING " + state);
         XmlSerializerUtil.copyBean(state, this.state);
-        rebuildHighlightColorIfNecessary();
+        backgroundColor = new Color(state.red, state.green, state.blue);
+        updateAttributesBackgroundColor(backgroundColor);
     }
 
     private void rebuildHighlightColorIfNecessary() {
         LOGGER.info("*****REBUILDING COLOUR  " + state + " vs " + backgroundColor);
-        LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getTextAttributes().getBackgroundColor());
+        LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getBackgroundColor());
         if (backgroundColor != null) {
             if (!state.red.equals(backgroundColor.getRed()) || !state.green.equals(backgroundColor.getGreen()) || !state.blue.equals(backgroundColor.getBlue())) {
                 LOGGER.info("*****REBUILDING " + state);
@@ -87,11 +91,22 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     private void updateAttributesBackgroundColor(Color backgroundColor) {
         LOGGER.info("*****UPDATE BG COLOR " + backgroundColor);
-        attributesDescription.getTextAttributes().setBackgroundColor(backgroundColor);
+        attributesDescription.setBackgroundColor(backgroundColor);
     }
 
     public HighlightedTabTextAttributesDescription getAttributesDescription() {
         return attributesDescription;
+    }
+
+    @Override
+    public void dispose() {
+        LOGGER.info("ActiveTabHighlighterConfiguration: disposed");
+    }
+
+    @Override
+    @NotNull
+    public String getComponentName() {
+        return "com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig";
     }
 
     static class State {

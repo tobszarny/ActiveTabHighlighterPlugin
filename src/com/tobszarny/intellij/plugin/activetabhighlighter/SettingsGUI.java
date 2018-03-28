@@ -48,7 +48,7 @@ public class SettingsGUI {
     }
 
     public void createUI(Project project) {
-        this.config = HighlighterSettingsConfig.getInstance(project);
+        this.config = HighlighterSettingsConfig.getInstance();
         redModel = new SpinnerNumberModel(config.state.red.intValue(), 0, 255, 1);
         greenModel = new SpinnerNumberModel(config.state.green.intValue(), 0, 255, 1);
         blueModel = new SpinnerNumberModel(config.state.blue.intValue(), 0, 255, 1);
