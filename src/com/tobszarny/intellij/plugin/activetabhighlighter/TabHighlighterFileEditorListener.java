@@ -8,8 +8,10 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
+import com.intellij.ui.tabs.TabInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -18,9 +20,14 @@ import java.awt.*;
  * File Editor Listener implementation for tab highlight
  * Created by Tomasz Obszarny on 19.01.2017.
  */
-public class TabHighlighterFileEditorListener implements FileEditorManagerListener {
+public class TabHighlighterFileEditorListener implements FileEditorManagerListener, HighlighterSettingsChangeListener {
 
-    private static final Logger logger = Logger.getInstance(TabHighlighterFileEditorListener.class);
+    private static final Logger LOGGER = Logger.getInstance(TabHighlighterFileEditorListener.class);
+    private final HighlighterSettingsConfig highlighterSettingsConfig;
+
+    public TabHighlighterFileEditorListener() {
+        highlighterSettingsConfig = HighlighterSettingsConfig.getInstance();
+    }
 
     @Override
     public void fileOpened(@NotNull FileEditorManager fileEditorManager, @NotNull VirtualFile virtualFile) {
@@ -35,28 +42,29 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
         final Project project = fileEditorManagerEvent.getManager().getProject();
         final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
         final FileColorManager fileColorManager = FileColorManager.getInstance(project);
-        final HighlighterSettingsConfig highlighterSettingsConfig = HighlighterSettingsConfig.getInstance();
+
 
         final VirtualFile oldFile = fileEditorManagerEvent.getOldFile();
         final VirtualFile newFile = fileEditorManagerEvent.getNewFile();
 
         for (EditorWindow editorWindow : manager.getWindows()) {
-            setUnfocusedTabWithColorManagerDefaultColor(fileColorManager, oldFile, editorWindow);
+            if (oldFile != null && editorWindow.findFileComposite(oldFile) != null) {
+                setUnfocusedTabWithColorManagerDefaultColor(fileColorManager, oldFile, editorWindow);
+            }
 
-            setFocusedTabHighlighterColor(highlighterSettingsConfig, newFile, editorWindow);
+            if (newFile != null && editorWindow.findFileComposite(newFile) != null) {
+                setFocusedTabHighlighterColor(newFile, editorWindow);
+            }
         }
     }
 
-    private void setFocusedTabHighlighterColor(@NotNull HighlighterSettingsConfig highlighterSettingsConfig, VirtualFile file, EditorWindow editorWindow) {
-        if (null != file) {
-            setTabColor(highlighterSettingsConfig.getBackgroundColor(), file, editorWindow);
-        }
+
+    private void setFocusedTabHighlighterColor(VirtualFile file, EditorWindow editorWindow) {
+        setTabColor(highlighterSettingsConfig.getBackgroundColor(), file, editorWindow);
     }
 
     private void setUnfocusedTabWithColorManagerDefaultColor(@NotNull FileColorManager fileColorManager, VirtualFile file, EditorWindow editorWindow) {
-        if (null != file) {
-            setTabColor(fileColorManager.getFileColor(file), file, editorWindow);
-        }
+        setTabColor(fileColorManager.getFileColor(file), file, editorWindow);
     }
 
     private void setTabColor(Color color, @NotNull VirtualFile file, @NotNull EditorWindow editorWindow) {
@@ -80,5 +88,23 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
         }
 
         return index;
+    }
+
+    @Override
+    public void settingsChanged(SettingsChangedEvent context) {
+        if (ProjectManager.getInstance().getOpenProjects() != null) {
+            for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+                final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
+
+                if (manager.getWindows() != null) {
+                    for (EditorWindow editorWindow : manager.getWindows()) {
+                        TabInfo selected = editorWindow.getTabbedPane().getTabs().getSelectedInfo();
+                        selected.setTabColor(highlighterSettingsConfig.getBackgroundColor());
+                    }
+                }
+
+            }
+        }
+
     }
 }

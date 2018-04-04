@@ -33,7 +33,7 @@ public class CustomEditorTabColorProvider implements EditorTabColorProvider {
             if (activeWindow != null) {
                 final EditorWithProviderComposite selectedEditor = activeWindow.getSelectedEditor();
 
-                if (selectedEditor != null && selectedEditor.getFile() != null && selectedEditor.getFile().equals(virtualFile)) {
+                if (selectedEditor != null && virtualFile.equals(selectedEditor.getFile())) {
                     return highlighterSettingsConfig.getBackgroundColor();
                 }
             }

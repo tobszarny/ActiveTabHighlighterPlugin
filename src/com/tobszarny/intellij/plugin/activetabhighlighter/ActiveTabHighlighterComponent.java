@@ -26,7 +26,9 @@ public class ActiveTabHighlighterComponent implements ApplicationComponent {
         logger.debug("Initializing component");
         MessageBus bus = ApplicationManager.getApplication().getMessageBus();
         connection = bus.connect();
-        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new TabHighlighterFileEditorListener());
+        TabHighlighterFileEditorListener tabHighlighterFileEditorListener = new TabHighlighterFileEditorListener();
+        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, tabHighlighterFileEditorListener);
+        connection.subscribe(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC, tabHighlighterFileEditorListener);
     }
 
     @Override

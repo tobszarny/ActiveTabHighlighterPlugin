@@ -266,6 +266,8 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     }
 
     public void apply(@NotNull EditorSchemeAttributeDescriptor attrDescription, EditorColorsScheme scheme) {
+
+        //Propagate event
         LOGGER.info("########### apply(attrDescription, scheme)");
         if (!(attrDescription instanceof ColorAndFontDescription)) return;
         ColorAndFontDescription description = (ColorAndFontDescription) attrDescription;

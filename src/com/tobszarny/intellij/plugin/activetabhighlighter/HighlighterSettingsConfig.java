@@ -1,7 +1,11 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -31,12 +35,13 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     @Nullable
     public static HighlighterSettingsConfig getInstance() {
-        HighlighterSettingsConfig sfec = ServiceManager.getService(HighlighterSettingsConfig.class);
+        HighlighterSettingsConfig sfec = ApplicationManager.getApplication().getComponent(HighlighterSettingsConfig.class);
+//        HighlighterSettingsConfig sfec = ServiceManager.getService(HighlighterSettingsConfig.class);
         return sfec;
     }
 
     public void setDefaults() {
-        LOGGER.info("*****setDefaults() ");
+//        LOGGER.info("*****setDefaults() ");
         persistentState = new PersistentState();
         persistentState.background.enabled = true;
         persistentState.background.red = 173;
@@ -57,18 +62,18 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     @Override
     public void loadState(PersistentState persistentState) {
-        LOGGER.info("*****LOADING " + persistentState);
+//        LOGGER.info("*****LOADING " + persistentState);
         XmlSerializerUtil.copyBean(persistentState, this.persistentState);
         backgroundColor = persistentState.getBackgroundColor();
         updateAttributes(persistentState);
     }
 
     private void rebuildHighlightColorIfNecessary() {
-        LOGGER.info("*****REBUILDING COLOUR  " + persistentState + " vs " + backgroundColor);
-        LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getBackgroundColor());
         if (backgroundColor != null) {
+//            LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getBackgroundColor());
             if (persistentState.isBackgroundColorDifferentThan(backgroundColor)) {
-                LOGGER.info("*****REBUILDING " + persistentState);
+                LOGGER.info("Rebuilding highlight color");
+                LOGGER.debug("Color changed from  " + backgroundColor + " to " + persistentState);
                 backgroundColor = persistentState.getBackgroundColor();
                 updateAttributes(persistentState);
             }
@@ -81,26 +86,26 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     }
 
     public Color getBackgroundColor() {
-        LOGGER.info("*****getBackgroundColor  " + backgroundColor);
+//        LOGGER.info("*****getBackgroundColor  " + backgroundColor);
         rebuildHighlightColorIfNecessary();
         return backgroundColor;
     }
 
     public void storeBackgroundColorInformation(boolean enabled, Color color) {
-        LOGGER.info("*****SAVE " + enabled + " " + color);
+//        LOGGER.info("*****SAVE " + enabled + " " + color);
         this.persistentState.storeBackgroundColorInformation(enabled, color);
 
         updateAttributesBackgroundColor(enabled, color);
     }
 
     private void updateAttributes(PersistentState state) {
-        LOGGER.info("*****updateAttributes(" + state + ")");
+//        LOGGER.info("*****updateAttributes(" + state + ")");
         attributesDescription.setBackgroundColor(state.getBackgroundColor());
         attributesDescription.setBackgroundChecked(state.isBackgroundColorUsed());
     }
 
     private void updateAttributesBackgroundColor(boolean enabled, Color color) {
-        LOGGER.info("*****UPDATE BG COLOR " + enabled + "" + color);
+//        LOGGER.info("*****UPDATE BG COLOR " + enabled + "" + color);
         attributesDescription.setBackgroundColor(color);
         attributesDescription.setBackgroundChecked(enabled);
     }
