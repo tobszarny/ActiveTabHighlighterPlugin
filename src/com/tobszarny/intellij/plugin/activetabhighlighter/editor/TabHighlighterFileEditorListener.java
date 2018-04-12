@@ -1,4 +1,4 @@
-package com.tobszarny.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -12,6 +12,9 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.tabs.TabInfo;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;

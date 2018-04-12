@@ -40,12 +40,12 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <editorTabColorProvider
-                implementation="com.tobszarny.intellij.plugin.activetabhighlighter.CustomEditorTabColorProvider"/>
+                implementation="com.tobszarny.intellij.plugin.activetabhighlighter.editor.CustomEditorTabColorProvider"/>
         <applicationConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
                                  id="preference.HighlighterSettingsConfigurable"
-                                 instance="com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfigurable"/>
-        <projectService serviceInterface="com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"
-                        serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig"/>
+                                 instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfigurable"/>
+        <projectService serviceInterface="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig"
+                        serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig"/>
     </extensions>
 
     <actions>
@@ -57,7 +57,7 @@
             </implementation-class>
         </component>
         <component>
-            <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig
+            <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig
             </implementation-class>
         </component>
     </application-components>

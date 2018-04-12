@@ -6,6 +6,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabHighlighterFileEditorListener;
 import org.jetbrains.annotations.NotNull;
 
 /**

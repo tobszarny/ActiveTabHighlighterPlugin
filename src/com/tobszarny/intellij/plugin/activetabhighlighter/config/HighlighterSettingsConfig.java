@@ -1,4 +1,4 @@
-package com.tobszarny.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -122,7 +122,7 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     @Override
     @NotNull
     public String getComponentName() {
-        return "com.tobszarny.intellij.plugin.activetabhighlighter.HighlighterSettingsConfig";
+        return "com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig";
     }
 
     static class PersistentState {

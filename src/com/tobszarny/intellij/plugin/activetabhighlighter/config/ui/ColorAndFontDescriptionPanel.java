@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tobszarny.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config.ui;
 
 import com.intellij.application.options.colors.ColorAndFontDescription;
 import com.intellij.application.options.colors.OptionsPanelImpl;

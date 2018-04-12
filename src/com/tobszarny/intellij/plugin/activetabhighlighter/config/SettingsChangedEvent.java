@@ -1,4 +1,4 @@
-package com.tobszarny.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
 import java.util.EventObject;
 

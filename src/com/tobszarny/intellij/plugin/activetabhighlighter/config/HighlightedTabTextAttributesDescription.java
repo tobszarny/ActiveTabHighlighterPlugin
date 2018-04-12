@@ -1,4 +1,4 @@
-package com.tobszarny.intellij.plugin.activetabhighlighter;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
 import com.intellij.application.options.colors.TextAttributesDescription;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
