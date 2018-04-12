@@ -15,7 +15,7 @@
                  <li>Global configuration <a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/7">tobszarny/ActiveTabHighlighterPlugin#7</a></li>
                  <li>Reset configuration changes <a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/8">tobszarny/ActiveTabHighlighterPlugin#8</a></li>
                  <li>Color picker offers the same user experience, </br>
-as one seen in ones for IntelliJ code style <a href ="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/9">tobszarny/ActiveTabHighlighterPlugin#9</a>
+as ones seen in IntelliJ code style settings<a href ="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/9">tobszarny/ActiveTabHighlighterPlugin#9</a>
                  </li>
                  <li>Active tab color reloads instantly after color change, </br>
 no need to switch the tab any more to update highlight color<a href ="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/10">tobszarny/ActiveTabHighlighterPlugin#10</a>
