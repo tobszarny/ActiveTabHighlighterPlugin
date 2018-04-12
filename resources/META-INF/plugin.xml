@@ -18,7 +18,7 @@
 as ones seen in IntelliJ code style settings<a href ="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/9">tobszarny/ActiveTabHighlighterPlugin#9</a>
                  </li>
                  <li>Active tab color reloads instantly after color change, </br>
-no need to switch the tab any more to update highlight color<a href ="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/10">tobszarny/ActiveTabHighlighterPlugin#10</a>
+no need to switch the tab any more to update the highlight color<a href ="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/10">tobszarny/ActiveTabHighlighterPlugin#10</a>
                  </li>
                </ul>
                <b>Changes in version 1.3.1:</b>
