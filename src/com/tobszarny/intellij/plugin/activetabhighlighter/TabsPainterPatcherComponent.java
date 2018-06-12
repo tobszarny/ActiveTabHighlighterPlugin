@@ -1,4 +1,4 @@
-package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
+package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import java.awt.*;
 import java.lang.reflect.Field;
@@ -123,12 +123,21 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 
 		Field finalFillPathField = fillPathField;
 		return (TabsPainter) Enhancer.create(TabsPainter.class, new MethodInterceptor() {
+			boolean broken = false;
+
 			@Override
 			public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 				final Object result = method.invoke(tabsPainter, objects);
 
-				if ("paintSelectionAndBorder".equals(method.getName())) {
-					TabsPainterPatcherComponent.this.paintSelectionAndBorder(objects, tabsPainter, finalFillPathField);
+				try {
+					if (!broken) {
+						if ("paintSelectionAndBorder".equals(method.getName())) {
+							TabsPainterPatcherComponent.this.paintSelectionAndBorder(objects, tabsPainter, finalFillPathField);
+						}
+					}
+				} catch (Exception e) {
+					LOG.error(e);
+					broken = true;
 				}
 
 				return result;
@@ -154,9 +163,9 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 				fillSelectionAndBorder(fillPathField, g2d, selectedShape, tabsPainter);
 			}
 
-			Color underline = new Color(config.getUnderline_color());
-			Color underlineColor_inactive = new Color(config.getUnderline_color_inactive());
-			int underlineOpacity_inactive = config.getUnderline_opacity_inactive();
+			Color underline = new Color(config.getUnderlineColor());
+			Color underlineColor_inactive = new Color(config.getUnderlineColor_inactive());
+			int underlineOpacity_inactive = config.getUnderlineOpacity_inactive();
 			Color inactiveUnderline = ColorUtil.withAlpha(underlineColor_inactive, underlineOpacity_inactive / 100.0);
 
 			g2d.setColor(JBEditorTabsPainter.hasFocus(myTabs) ? underline : inactiveUnderline);
@@ -288,6 +297,14 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		private Integer underlineColor_inactive = Color.BLACK.getRGB();
 		private int underlineOpacity_inactive = 100;
 
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
 		public Integer getClassic_mask() {
 			return classic_mask;
 		}
@@ -320,24 +337,32 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 			this.darcula_opacity = darcula_opacity;
 		}
 
-		public boolean isEnabled() {
-			return enabled;
-		}
-
-		public void setEnabled(boolean enabled) {
-			this.enabled = enabled;
-		}
-
-		public Integer getUnderline_color() {
+		public Integer getUnderlineColor() {
 			return underlineColor;
 		}
 
-		public void setUnderline_color(Integer underlineColor) {
+		public void setUnderlineColor(Integer underlineColor) {
 			this.underlineColor = underlineColor;
 		}
 
+		public Integer getUnderlineColor_inactive() {
+			return underlineColor_inactive;
+		}
+
+		public void setUnderlineColor_inactive(Integer underlineColor_inactive) {
+			this.underlineColor_inactive = underlineColor_inactive;
+		}
+
+		public int getUnderlineOpacity_inactive() {
+			return underlineOpacity_inactive;
+		}
+
+		public void setUnderlineOpacity_inactive(int underlineOpacity_inactive) {
+			this.underlineOpacity_inactive = underlineOpacity_inactive;
+		}
+
 		@Transient
-		public void setOpacity(String text) {
+		public void setClassicOpacity(String text) {
 			try {
 				this.classic_opacity = parse(text);
 			} catch (Exception e) {
@@ -346,28 +371,12 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		}
 
 		@Transient
-		public void setDarcula_opacity(String text) {
+		public void setDarculaOpacity(String text) {
 			try {
 				this.darcula_opacity = parse(text);
 			} catch (Exception e) {
 				darcula_opacity = DEFAULT_DARCULA_OPACITY;
 			}
-		}
-
-		public Integer getUnderline_color_inactive() {
-			return underlineColor_inactive;
-		}
-
-		public void setUnderline_color_inactive(Integer underlineColor_inactive) {
-			this.underlineColor_inactive = underlineColor_inactive;
-		}
-
-		public int getUnderline_opacity_inactive() {
-			return underlineOpacity_inactive;
-		}
-
-		public void setUnderline_opacity_inactive(int underlineOpacity_inactive) {
-			this.underlineOpacity_inactive = underlineOpacity_inactive;
 		}
 
 		private int parse(String text) {
