@@ -76,6 +76,10 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		connect.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
 			@Override
 			public void selectionChanged(@NotNull final FileEditorManagerEvent event) {
+				if (!config.isEnabled()) {
+					return;
+				}
+
 				final FileEditor editor = event.getNewEditor();
 				if (editor != null) {
 					Component component = editor.getComponent();
@@ -271,7 +275,8 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		public static final Color DEFAULT_DARCULA_MASK = new Color(0x262626);
 		public static final int DEFAULT_DARCULA_OPACITY = 50; // too low
 
-		private boolean patchPainter;
+		/** disabling requires restart */
+		private boolean enabled = true;
 
 		private Integer classic_mask = DEFAULT_MASK.getRGB();
 		private int classic_opacity = DEFAULT_OPACITY;
@@ -315,12 +320,12 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 			this.darcula_opacity = darcula_opacity;
 		}
 
-		public boolean isPatchPainter() {
-			return patchPainter;
+		public boolean isEnabled() {
+			return enabled;
 		}
 
-		public void setPatchPainter(boolean patchPainter) {
-			this.patchPainter = patchPainter;
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 		}
 
 		public Integer getUnderline_color() {
