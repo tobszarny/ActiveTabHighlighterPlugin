@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.ui.ColorUtil;
+import com.intellij.ui.Gray;
 import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.impl.DefaultEditorTabsPainter;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
@@ -58,8 +59,10 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		if (editorGroupsTabsPainter != null) {
 			if (editorGroupsTabsPainter instanceof DarculaTabsPainter) {
 				editorGroupsTabsPainter.setMask(new Color(config.getDarcula_mask()), config.getDarcula_opacity());
+				editorGroupsTabsPainter.setActiveColor(new Color(config.getDarcula_activeColor()));
 			} else {
 				editorGroupsTabsPainter.setMask(new Color(config.getClassic_mask()), config.getClassic_opacity());
+				editorGroupsTabsPainter.setActiveColor(new Color(config.getClassic_activeColor()));
 			}
 			JBEditorTabs painterTabs = editorGroupsTabsPainter.getTabs();
 			if (!painterTabs.isDisposed()) {
@@ -114,14 +117,21 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 
 	private JBEditorTabsPainter proxy(TabsPainter tabsPainter) {
 		Field fillPathField = null;
+		Field pathField = null;
+		Field labelPathField = null;
 		try {
 			final Class<?> clazz = Class.forName("com.intellij.ui.tabs.impl.JBTabsImpl$ShapeInfo");
 			fillPathField = clazz.getField("fillPath");
+			pathField = clazz.getField("path");
+			labelPathField = clazz.getField("labelPath");
+
 		} catch (Exception e) {
 			LOG.error(e);
 		}
 
 		Field finalFillPathField = fillPathField;
+		Field finalPathField = pathField;
+		Field finalLabelPathField = labelPathField;
 		return (TabsPainter) Enhancer.create(TabsPainter.class, new MethodInterceptor() {
 			boolean broken = false;
 
@@ -132,7 +142,8 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 				try {
 					if (!broken) {
 						if ("paintSelectionAndBorder".equals(method.getName())) {
-							TabsPainterPatcherComponent.this.paintSelectionAndBorder(objects, tabsPainter, finalFillPathField);
+							TabsPainterPatcherComponent.this.paintSelectionAndBorder(objects, tabsPainter, finalFillPathField, finalPathField,
+									finalLabelPathField);
 						}
 					}
 				} catch (Exception e) {
@@ -146,21 +157,30 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 	}
 
 	/** kinda like the original */
-	private void paintSelectionAndBorder(Object[] objects, TabsPainter tabsPainter, Field fillPathField) throws IllegalAccessException {
+	private void paintSelectionAndBorder(Object[] objects, TabsPainter tabsPainter, Field fillPathField, Field pathField, Field labelPathField)
+			throws IllegalAccessException {
 		// Retrieve arguments
 		final Graphics2D g2d = (Graphics2D) objects[0];
 		final Rectangle rect = (Rectangle) objects[1];
 		final Object selectedShape = objects[2];
-		// final Insets insets = (Insets) objects[3];
-		// final Color tabColor = (Color) objects[4];
+		final Insets insets = (Insets) objects[3];
+		final Color tabColor = (Color) objects[4];
 
 		JBEditorTabs myTabs = tabsPainter.getTabs();
 		final JBTabsPosition position = myTabs.getTabsPosition();
+		final boolean horizontalTabs = myTabs.isHorizontalTabs();
+		int _x = rect.x;
+		int _y = rect.y;
+		int _height = rect.height;
+		boolean hasFocus = JBEditorTabsPainter.hasFocus(myTabs);
+		ShapeTransform shapeTransform = null;
+		if (fillPathField != null) {
+			shapeTransform = (ShapeTransform) fillPathField.get(selectedShape);
+		}
 
-		if (myTabs.hasUnderlineSelection() /* && myTabs.getTabCount() > 1 */) {
-
-			if (fillPathField != null && !JBEditorTabsPainter.hasFocus(myTabs)) {
-				fillSelectionAndBorder(fillPathField, g2d, selectedShape, tabsPainter);
+		if (myTabs.hasUnderlineSelection() /* && myTabs.getTabCount() > 1 */) { // darcula
+			if (shapeTransform != null && hasFocus) {
+				fillSelectionAndBorder(g2d, tabsPainter, hasFocus, shapeTransform);
 			}
 
 			Color underline = new Color(config.getUnderlineColor());
@@ -168,7 +188,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 			int underlineOpacity_inactive = config.getUnderlineOpacity_inactive();
 			Color inactiveUnderline = ColorUtil.withAlpha(underlineColor_inactive, underlineOpacity_inactive / 100.0);
 
-			g2d.setColor(JBEditorTabsPainter.hasFocus(myTabs) ? underline : inactiveUnderline);
+			g2d.setColor(hasFocus ? underline : inactiveUnderline);
 			int thickness = 3;
 			if (position == JBTabsPosition.bottom) {
 				g2d.fillRect(rect.x, rect.y - 1, rect.width, thickness);
@@ -181,13 +201,26 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 			} else if (position == JBTabsPosition.right) {
 				g2d.fillRect(rect.x, rect.y, thickness, rect.height);
 			}
+		} else { // classic skin
+			if (pathField == null || labelPathField == null) {
+				return;
+			}
+			final ShapeTransform path = (ShapeTransform) pathField.get(selectedShape);
+			final ShapeTransform labelPath = (ShapeTransform) labelPathField.get(selectedShape);
+			Insets i = path.transformInsets(insets);
+
+			if (shapeTransform != null && hasFocus) {
+				fillSelectionAndBorder(g2d, tabsPainter, hasFocus, shapeTransform);
+			}
+
+			g2d.setColor(Gray._0.withAlpha(15));
+			g2d.draw(labelPath.transformLine(i.left, labelPath.getMaxY(), path.getMaxX(), labelPath.getMaxY()));
 		}
+
 	}
 
-	private void fillSelectionAndBorder(Field fillPathField, Graphics2D g2d, Object selectedShape, TabsPainter tabsPainter) throws IllegalAccessException {
-		final ShapeTransform fillPath = (ShapeTransform) fillPathField.get(selectedShape);
-
-		g2d.setColor(tabsPainter.getInactiveMaskColor());
+	private void fillSelectionAndBorder(Graphics2D g2d, TabsPainter tabsPainter, boolean hasFocus, ShapeTransform fillPath) throws IllegalAccessException {
+		g2d.setColor(hasFocus ? tabsPainter.getActiveColor() : tabsPainter.getInactiveMaskColor());
 		g2d.fill(fillPath.getShape());
 	}
 
@@ -222,6 +255,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		private JBEditorTabs tabs;
 
 		protected Color inactiveMaskColor;
+		protected Color activeColor;
 
 		/** for proxy */
 		public TabsPainter() {
@@ -254,6 +288,13 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 			this.inactiveMaskColor = ColorUtil.withAlpha(mask, (opacity / 100.0));
 		}
 
+		public Color getActiveColor() {
+			return activeColor;
+		}
+
+		public void setActiveColor(Color activeColor) {
+			this.activeColor = activeColor;
+		}
 	}
 
 	/**
@@ -290,12 +331,16 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		private Integer classic_mask = DEFAULT_MASK.getRGB();
 		private int classic_opacity = DEFAULT_OPACITY;
 
+		// currently not used - delete?
 		private Integer darcula_mask = DEFAULT_DARCULA_MASK.getRGB();
-		private int darcula_opacity = DEFAULT_DARCULA_OPACITY + 20;
+		private int darcula_opacity = 50;
 
 		private Integer underlineColor = new Color(0x439EB8).getRGB();
 		private Integer underlineColor_inactive = Color.BLACK.getRGB();
-		private int underlineOpacity_inactive = 100;
+		private int underlineOpacity_inactive = 0;
+
+		private int darcula_activeColor = new Color(173, 46, 156).getRGB();
+		private int classic_activeColor = new Color(173, 46, 156).getRGB();
 
 		public boolean isEnabled() {
 			return enabled;
@@ -387,6 +432,22 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 				opacity = 0;
 			}
 			return opacity;
+		}
+
+		public int getDarcula_activeColor() {
+			return darcula_activeColor;
+		}
+
+		public void setDarcula_activeColor(int darcula_activeColor) {
+			this.darcula_activeColor = darcula_activeColor;
+		}
+
+		public int getClassic_activeColor() {
+			return classic_activeColor;
+		}
+
+		public void setClassic_activeColor(int classic_activeColor) {
+			this.classic_activeColor = classic_activeColor;
 		}
 	}
 }
