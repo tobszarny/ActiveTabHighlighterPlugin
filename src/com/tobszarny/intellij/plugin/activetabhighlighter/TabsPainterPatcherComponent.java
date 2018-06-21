@@ -215,7 +215,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		}
 
 		if (myTabs.hasUnderlineSelection() /* && myTabs.getTabCount() > 1 */) { // darcula
-			if (shapeTransform != null && hasFocus) {
+			if (shapeTransform != null) {
 				fillSelectionAndBorder(g2d, tabsPainter, hasFocus, shapeTransform);
 			}
 
@@ -245,7 +245,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 			final ShapeTransform labelPath = (ShapeTransform) labelPathField.get(selectedShape);
 			Insets i = path.transformInsets(insets);
 
-			if (shapeTransform != null && hasFocus) {
+			if (shapeTransform != null) {
 				fillSelectionAndBorder(g2d, tabsPainter, hasFocus, shapeTransform);
 			}
 
@@ -367,7 +367,6 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		private Integer classic_mask = DEFAULT_MASK.getRGB();
 		private int classic_opacity = DEFAULT_OPACITY;
 
-		// currently not used - delete?
 		private Integer darcula_mask = DEFAULT_DARCULA_MASK.getRGB();
 		private int darcula_opacity = 50;
 
