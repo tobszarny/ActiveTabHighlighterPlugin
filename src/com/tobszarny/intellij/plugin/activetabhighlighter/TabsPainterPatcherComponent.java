@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.tabs.JBTabsPosition;
@@ -111,11 +112,15 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		init(darculaTabsPainter);
 
 		LOG.info("HACK: Overriding JBEditorTabsPainters");
-		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDefaultPainter", proxy(tabsPainter));
-		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDarkPainter", proxy(darculaTabsPainter));
+
+		/* https://youtrack.jetbrains.com/issue/IDEA-194380 */
+		boolean brokenFocus = !(UIUtil.isUnderDarcula() && Registry.is("ide.new.editor.tabs.selection"));
+
+		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDefaultPainter", proxy(tabsPainter, brokenFocus));
+		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDarkPainter", proxy(darculaTabsPainter, brokenFocus));
 	}
 
-	private JBEditorTabsPainter proxy(TabsPainter tabsPainter) {
+	private JBEditorTabsPainter proxy(TabsPainter tabsPainter, final boolean brokenFocus) {
 		Field fillPathField = null;
 		Field pathField = null;
 		Field labelPathField = null;
@@ -143,7 +148,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 					if (!broken) {
 						if ("paintSelectionAndBorder".equals(method.getName())) {
 							TabsPainterPatcherComponent.this.paintSelectionAndBorder(objects, tabsPainter, finalFillPathField, finalPathField,
-									finalLabelPathField);
+									finalLabelPathField, brokenFocus);
 						}
 					}
 				} catch (Exception e) {
@@ -157,8 +162,10 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 	}
 
 	/** kinda like the original */
-	private void paintSelectionAndBorder(Object[] objects, TabsPainter tabsPainter, Field fillPathField, Field pathField, Field labelPathField)
+	private void paintSelectionAndBorder(Object[] objects, TabsPainter tabsPainter, Field fillPathField, Field pathField, Field labelPathField,
+			boolean brokenFocus)
 			throws IllegalAccessException {
+
 		// Retrieve arguments
 		final Graphics2D g2d = (Graphics2D) objects[0];
 		final Rectangle rect = (Rectangle) objects[1];
@@ -172,7 +179,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		int _x = rect.x;
 		int _y = rect.y;
 		int _height = rect.height;
-		boolean hasFocus = JBEditorTabsPainter.hasFocus(myTabs);
+		boolean hasFocus = JBEditorTabsPainter.hasFocus(myTabs) || brokenFocus;
 		ShapeTransform shapeTransform = null;
 		if (fillPathField != null) {
 			shapeTransform = (ShapeTransform) fillPathField.get(selectedShape);
