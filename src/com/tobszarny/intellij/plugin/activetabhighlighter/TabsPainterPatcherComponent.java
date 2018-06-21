@@ -1,12 +1,15 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.WeakHashMap;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.intellij.ide.IdeEventQueue;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -113,14 +116,41 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 
 		LOG.info("HACK: Overriding JBEditorTabsPainters");
 
-		/* https://youtrack.jetbrains.com/issue/IDEA-194380 */
-		boolean brokenFocus = !(UIUtil.isUnderDarcula() && Registry.is("ide.new.editor.tabs.selection"));
+		/* workaround for https://youtrack.jetbrains.com/issue/IDEA-194380 */
+		if (!hasUnderlineSelection()) {
+			IdeEventQueue.getInstance().addDispatcher(createFocusDispatcher(component), component);
+		}
 
-		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDefaultPainter", proxy(tabsPainter, brokenFocus));
-		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDarkPainter", proxy(darculaTabsPainter, brokenFocus));
+		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDefaultPainter", proxy(tabsPainter));
+		ReflectionUtil.setField(JBEditorTabs.class, component, JBEditorTabsPainter.class, "myDarkPainter", proxy(darculaTabsPainter));
 	}
 
-	private JBEditorTabsPainter proxy(TabsPainter tabsPainter, final boolean brokenFocus) {
+	private IdeEventQueue.EventDispatcher createFocusDispatcher(JBEditorTabs component) {
+		return e -> {
+			if (e instanceof FocusEvent) {
+				Component from = ((FocusEvent) e).getOppositeComponent();
+				Component to = ((FocusEvent) e).getComponent();
+				if (isChild(from, component) || isChild(to, component)) {
+					component.repaint();
+				}
+			}
+			return false;
+		};
+	}
+
+	private boolean isChild(@Nullable Component c, JBEditorTabs component) {
+		if (c == null)
+			return false;
+		if (c == component)
+			return true;
+		return isChild(c.getParent(), component);
+	}
+
+	public boolean hasUnderlineSelection() {
+		return UIUtil.isUnderDarcula() && Registry.is("ide.new.editor.tabs.selection");
+	}
+
+	private JBEditorTabsPainter proxy(TabsPainter tabsPainter) {
 		Field fillPathField = null;
 		Field pathField = null;
 		Field labelPathField = null;
@@ -148,7 +178,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 					if (!broken) {
 						if ("paintSelectionAndBorder".equals(method.getName())) {
 							TabsPainterPatcherComponent.this.paintSelectionAndBorder(objects, tabsPainter, finalFillPathField, finalPathField,
-									finalLabelPathField, brokenFocus);
+									finalLabelPathField);
 						}
 					}
 				} catch (Exception e) {
@@ -162,8 +192,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 	}
 
 	/** kinda like the original */
-	private void paintSelectionAndBorder(Object[] objects, TabsPainter tabsPainter, Field fillPathField, Field pathField, Field labelPathField,
-			boolean brokenFocus)
+	private void paintSelectionAndBorder(Object[] objects, TabsPainter tabsPainter, Field fillPathField, Field pathField, Field labelPathField)
 			throws IllegalAccessException {
 
 		// Retrieve arguments
@@ -179,7 +208,7 @@ public final class TabsPainterPatcherComponent implements ApplicationComponent {
 		int _x = rect.x;
 		int _y = rect.y;
 		int _height = rect.height;
-		boolean hasFocus = JBEditorTabsPainter.hasFocus(myTabs) || brokenFocus;
+		boolean hasFocus = JBEditorTabsPainter.hasFocus(myTabs);
 		ShapeTransform shapeTransform = null;
 		if (fillPathField != null) {
 			shapeTransform = (ShapeTransform) fillPathField.get(selectedShape);
