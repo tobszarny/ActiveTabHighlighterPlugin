@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ActiveTabHighlighterPlugin.iml" filepath="$PROJECT_DIR$/ActiveTabHighlighterPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/activetabhighlighter.iml" filepath="$PROJECT_DIR$/.idea/modules/activetabhighlighter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/activetabhighlighter.main.iml" filepath="$PROJECT_DIR$/.idea/modules/activetabhighlighter.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/activetabhighlighter.test.iml" filepath="$PROJECT_DIR$/.idea/modules/activetabhighlighter.test.iml" />
     </modules>
   </component>
 </project>
