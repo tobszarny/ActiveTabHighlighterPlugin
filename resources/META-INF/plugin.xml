@@ -71,5 +71,10 @@ no need to switch the tab any more to update the highlight color<a href ="https:
             <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig
             </implementation-class>
         </component>
+        <component>
+            <implementation-class>
+                com.tobszarny.intellij.plugin.activetabhighlighter.TabsPainterPatcherComponent
+            </implementation-class>
+        </component>
     </application-components>
 </idea-plugin>
