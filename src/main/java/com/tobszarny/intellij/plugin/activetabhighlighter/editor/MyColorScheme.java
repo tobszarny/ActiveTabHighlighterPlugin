@@ -65,6 +65,7 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
             setFontPreferences(parentScheme.getFontPreferences());
         }
 
+
         setQuickDocFontSize(parentScheme.getQuickDocFontSize());
         myName = parentScheme.getName();
 
@@ -293,7 +294,7 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
 
             PackageSet value = namedScope.getValue();
             String toolTip = holder.getDisplayName() + (value == null ? "" : ": " + value.getText());
-            descriptions.add(new SchemeTextAttributesDescription(name, ColorAndFontOptions.SCOPES_GROUP, textAttributesKey, scheme, holder.getIcon(), toolTip));
+            descriptions.add(new SchemeTextAttributesDescription(name, ColorAndFontOptions.getScopesGroup(), textAttributesKey, scheme, holder.getIcon(), toolTip));
         }
     }
 

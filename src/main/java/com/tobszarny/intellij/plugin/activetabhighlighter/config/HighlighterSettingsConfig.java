@@ -19,8 +19,8 @@ import java.awt.*;
 @State(name = "ActiveTabHighlighterConfiguration",
         storages = {
                 @Storage(value = "active-tab-highlighter.xml")
-        }, additionalExportFile = "active-tab-highlighter")
-public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState>, Disposable, ApplicationComponent {
+        })
+public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState>, Disposable {
 
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
@@ -117,12 +117,6 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     @Override
     public void dispose() {
         LOGGER.info("ActiveTabHighlighterConfiguration: disposed");
-    }
-
-    @Override
-    @NotNull
-    public String getComponentName() {
-        return "com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig";
     }
 
     static class PersistentState {
