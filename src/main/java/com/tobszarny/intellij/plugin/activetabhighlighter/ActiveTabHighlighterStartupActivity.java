@@ -23,18 +23,18 @@ public class ActiveTabHighlighterStartupActivity implements StartupActivity, Dum
 
     private MessageBusConnection connection;
 
-    public void init() {
+    public void init(Project project) {
         logger.debug("Initializing component");
         MessageBus bus = ApplicationManager.getApplication().getMessageBus();
         connection = bus.connect();
-        TabHighlighterFileEditorListener tabHighlighterFileEditorListener = new TabHighlighterFileEditorListener();
+        TabHighlighterFileEditorListener tabHighlighterFileEditorListener = new TabHighlighterFileEditorListener(project);
         connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, tabHighlighterFileEditorListener);
         connection.subscribe(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC, tabHighlighterFileEditorListener);
     }
 
     @Override
     public void runActivity(@NotNull Project project) {
-        init();
+        init(project);
         if(ApplicationManager.getApplication().isUnitTestMode()) {
             // don't create the UI when unit testing
             return;

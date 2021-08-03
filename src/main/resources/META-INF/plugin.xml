@@ -44,7 +44,6 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
     -->
     <depends>com.intellij.modules.lang</depends>
 
@@ -54,25 +53,24 @@
 
         <editorTabColorProvider
                 implementation="com.tobszarny.intellij.plugin.activetabhighlighter.editor.CustomEditorTabColorProvider"/>
-        <applicationConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
+        <projectConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
                                  id="preference.HighlighterSettingsConfigurable"
                                  instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfigurable"/>
-        <projectService serviceInterface="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig"
-                        serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig"/>
+        <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig"/>
     </extensions>
 
     <actions>
     </actions>
 
-    <application-components>
-        <component>
-            <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig
-            </implementation-class>
-        </component>
+<!--    <application-components>-->
+<!--        <component>-->
+<!--            <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig-->
+<!--            </implementation-class>-->
+<!--        </component>-->
 <!--        <component>-->
 <!--            <implementation-class>-->
 <!--                com.tobszarny.intellij.plugin.activetabhighlighter.TabsPainterPatcherComponent-->
 <!--            </implementation-class>-->
 <!--        </component>-->
-    </application-components>
+<!--    </application-components>-->
 </idea-plugin>

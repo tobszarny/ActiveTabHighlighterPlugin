@@ -31,11 +31,10 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.ColorPanel;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.FontUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -96,11 +95,11 @@ public class ColorAndFontDescriptionPanelFull extends JPanel implements OptionsP
         setBorder(JBUI.Borders.empty(4, 0, 4, 4));
         //noinspection unchecked
         myEffectsCombo.setModel(new CollectionComboBoxModel<>(new ArrayList<>(myEffectsMap.keySet())));
-        //noinspection unchecked
-        myEffectsCombo.setRenderer(new ListCellRendererWrapper<String>() {
+
+        myEffectsCombo.setRenderer(new SimpleListCellRenderer() {
             @Override
-            public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-                setText(value != null ? value : "<invalid>");
+            public void customize(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
+                setText(value != null ? String.valueOf(value) : "<invalid>");
             }
         });
 

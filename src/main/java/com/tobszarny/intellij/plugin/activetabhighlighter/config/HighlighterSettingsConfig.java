@@ -1,8 +1,7 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -10,17 +9,17 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 @State(name = "ActiveTabHighlighterConfiguration",
         storages = {
-                @Storage(value = "active-tab-highlighter.xml")
+                @Storage("active-tab-highlighter.xml")
         })
-public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState>, Disposable {
+public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState> {
 
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
@@ -34,10 +33,8 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     }
 
     @Nullable
-    public static HighlighterSettingsConfig getInstance() {
-        HighlighterSettingsConfig sfec = ApplicationManager.getApplication().getComponent(HighlighterSettingsConfig.class);
-//        HighlighterSettingsConfig sfec = ServiceManager.getService(HighlighterSettingsConfig.class);
-        return sfec;
+    public static HighlighterSettingsConfig getSettings(Project project) {
+        return project.getService(HighlighterSettingsConfig.class);
     }
 
     public void setDefaults() {
@@ -112,11 +109,6 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     public HighlightedTabTextAttributesDescription getAttributesDescription() {
         return attributesDescription;
-    }
-
-    @Override
-    public void dispose() {
-        LOGGER.info("ActiveTabHighlighterConfiguration: disposed");
     }
 
     static class PersistentState {

@@ -27,9 +27,11 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
 
     private static final Logger LOGGER = Logger.getInstance(TabHighlighterFileEditorListener.class);
     private final HighlighterSettingsConfig highlighterSettingsConfig;
+    private final Project myProject;
 
-    public TabHighlighterFileEditorListener() {
-        highlighterSettingsConfig = HighlighterSettingsConfig.getInstance();
+    public TabHighlighterFileEditorListener(Project project) {
+        this.myProject = project;
+        highlighterSettingsConfig = HighlighterSettingsConfig.getSettings(project);
     }
 
     @Override
