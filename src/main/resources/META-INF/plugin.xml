@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.tobszarny.activetabhighlighter.plugin.id</id>
-    <name>Active Intellij Tab Highlighter</name>
+    <name>Active Tab Highlighter</name>
     <version>1.4.0</version>
     <vendor email="tomasz.obszarny.ga@gmail.com" url="https://github.com/tobszarny">tobszarny</vendor>
 
@@ -49,7 +49,9 @@
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <!-- Startup -->
+        <postStartupActivity implementation="com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterStartupActivity"/>
+
         <editorTabColorProvider
                 implementation="com.tobszarny.intellij.plugin.activetabhighlighter.editor.CustomEditorTabColorProvider"/>
         <applicationConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
@@ -64,17 +66,13 @@
 
     <application-components>
         <component>
-            <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterComponent
-            </implementation-class>
-        </component>
-        <component>
             <implementation-class>com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig
             </implementation-class>
         </component>
-        <component>
-            <implementation-class>
-                com.tobszarny.intellij.plugin.activetabhighlighter.TabsPainterPatcherComponent
-            </implementation-class>
-        </component>
+<!--        <component>-->
+<!--            <implementation-class>-->
+<!--                com.tobszarny.intellij.plugin.activetabhighlighter.TabsPainterPatcherComponent-->
+<!--            </implementation-class>-->
+<!--        </component>-->
     </application-components>
 </idea-plugin>

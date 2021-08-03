@@ -42,6 +42,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -62,7 +63,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     private boolean myUiEventsEnabled = true;
 
     {
-        Map<String, EffectType> map = ContainerUtil.newLinkedHashMap();
+        Map<String, EffectType> map = new LinkedHashMap();
         map.put(ApplicationBundle.message("combobox.effect.underscored"), EffectType.LINE_UNDERSCORE);
         map.put(ApplicationBundle.message("combobox.effect.boldunderscored"), EffectType.BOLD_LINE_UNDERSCORE);
         map.put(ApplicationBundle.message("combobox.effect.underwaved"), EffectType.WAVE_UNDERSCORE);

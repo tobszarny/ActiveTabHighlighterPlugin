@@ -44,7 +44,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -77,7 +79,7 @@ public class ColorAndFontDescriptionPanelFull extends JPanel implements OptionsP
     private boolean myUiEventsEnabled = true;
 
     {
-        Map<String, EffectType> map = ContainerUtil.newLinkedHashMap();
+        Map<String, EffectType> map = new LinkedHashMap();
         map.put(ApplicationBundle.message("combobox.effect.underscored"), EffectType.LINE_UNDERSCORE);
         map.put(ApplicationBundle.message("combobox.effect.boldunderscored"), EffectType.BOLD_LINE_UNDERSCORE);
         map.put(ApplicationBundle.message("combobox.effect.underwaved"), EffectType.WAVE_UNDERSCORE);
@@ -93,7 +95,7 @@ public class ColorAndFontDescriptionPanelFull extends JPanel implements OptionsP
 
         setBorder(JBUI.Borders.empty(4, 0, 4, 4));
         //noinspection unchecked
-        myEffectsCombo.setModel(new CollectionComboBoxModel<>(ContainerUtil.newArrayList(myEffectsMap.keySet())));
+        myEffectsCombo.setModel(new CollectionComboBoxModel<>(new ArrayList<>(myEffectsMap.keySet())));
         //noinspection unchecked
         myEffectsCombo.setRenderer(new ListCellRendererWrapper<String>() {
             @Override
