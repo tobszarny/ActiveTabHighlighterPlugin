@@ -5,6 +5,7 @@ import com.intellij.application.options.colors.ColorSettingsUtil;
 import com.intellij.application.options.colors.RainbowColorsInSchemeState;
 import com.intellij.application.options.colors.ScopeAttributesUtil;
 import com.intellij.codeHighlighting.RainbowHighlighter;
+import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.ColorKey;
@@ -66,8 +67,10 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
             setFontPreferences(parentScheme.getFontPreferences());
         }
 
+//        parentScheme.setQuickDocFontSize();
+//        DocumentationComponent.setQuickDocFontSize().
 
-        setQuickDocFontSize(parentScheme.getQuickDocFontSize());
+//        setQuickDocFontSize(parentScheme.getQuickDocFontSize());
         myName = parentScheme.getName();
 
         RainbowHighlighter.transferRainbowState(this, parentScheme);

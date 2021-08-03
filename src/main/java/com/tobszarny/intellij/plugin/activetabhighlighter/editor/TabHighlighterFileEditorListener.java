@@ -32,6 +32,9 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
     public TabHighlighterFileEditorListener(Project project) {
         this.myProject = project;
         highlighterSettingsConfig = HighlighterSettingsConfig.getSettings(project);
+
+//        FileEditorManager instance = FileEditorManager.getInstance(project);
+//        project.
     }
 
     @Override
