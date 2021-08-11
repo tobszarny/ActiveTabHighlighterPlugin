@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.ColorAndFontDescriptionPanel;
 import org.jetbrains.annotations.Nls;
@@ -22,11 +23,13 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
     private final HighlighterSettingsConfig config;
     private final EditorColorsScheme editorColorsScheme;
     private final MessageBus bus;
+    private final Project myProject;
 
     private ColorAndFontDescriptionPanel colorAndFontDescriptionPanel;
 
-    public HighlighterSettingsConfigurable() {
-        this.config = HighlighterSettingsConfig.getInstance();
+    public HighlighterSettingsConfigurable(Project project) {
+        this.myProject = project;
+        this.config = HighlighterSettingsConfig.getSettings(project);
         this.editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
         bus = ApplicationManager.getApplication().getMessageBus();
     }
@@ -98,10 +101,10 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
         colorAndFontDescriptionPanel.reset(config.getAttributesDescription());
     }
 
-    @Override
-    public void disposeUIResources() {
+//    @Override
+//    public void disposeUIResources() {
 //        LOGGER.info("***** disposeUIResources() ");
-        colorAndFontDescriptionPanel = null;
-    }
+//        colorAndFontDescriptionPanel = null;
+//    }
 
 }

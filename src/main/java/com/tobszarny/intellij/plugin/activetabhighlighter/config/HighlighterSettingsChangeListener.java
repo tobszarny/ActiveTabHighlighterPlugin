@@ -10,7 +10,5 @@ public interface HighlighterSettingsChangeListener extends EventListener {
     default void beforeSettingsChanged(SettingsChangedEvent context) {
     }
 
-    ;
-
     void settingsChanged(SettingsChangedEvent context);
 }

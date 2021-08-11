@@ -5,6 +5,7 @@ import com.intellij.application.options.colors.ColorSettingsUtil;
 import com.intellij.application.options.colors.RainbowColorsInSchemeState;
 import com.intellij.application.options.colors.ScopeAttributesUtil;
 import com.intellij.codeHighlighting.RainbowHighlighter;
+import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.ColorKey;
@@ -15,6 +16,7 @@ import com.intellij.openapi.editor.colors.impl.AbstractColorsScheme;
 import com.intellij.openapi.editor.colors.impl.EditorColorsSchemeImpl;
 import com.intellij.openapi.editor.colors.impl.ReadOnlyColorsScheme;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.colors.*;
 import com.intellij.openapi.project.Project;
@@ -65,7 +67,10 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
             setFontPreferences(parentScheme.getFontPreferences());
         }
 
-        setQuickDocFontSize(parentScheme.getQuickDocFontSize());
+//        parentScheme.setQuickDocFontSize();
+//        DocumentationComponent.setQuickDocFontSize().
+
+//        setQuickDocFontSize(parentScheme.getQuickDocFontSize());
         myName = parentScheme.getName();
 
         RainbowHighlighter.transferRainbowState(this, parentScheme);
@@ -255,7 +260,7 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
         for (ColorSettingsPage page : pages) {
             initDescriptions(page, descriptions, scheme);
         }
-        for (ColorAndFontDescriptorsProvider provider : Extensions.getExtensions(ColorAndFontDescriptorsProvider.EP_NAME)) {
+        for (ColorAndFontDescriptorsProvider provider : ColorAndFontDescriptorsProvider.EP_NAME.getExtensionList()) {
             initDescriptions(provider, descriptions, scheme);
         }
     }
@@ -264,12 +269,12 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
         Set<Pair<NamedScope, NamedScopesHolder>> namedScopes = new THashSet<>(new TObjectHashingStrategy<Pair<NamedScope, NamedScopesHolder>>() {
             @Override
             public int computeHashCode(@NotNull final Pair<NamedScope, NamedScopesHolder> object) {
-                return object.getFirst().getName().hashCode();
+                return object.getFirst().getScopeId().hashCode();
             }
 
             @Override
             public boolean equals(@NotNull final Pair<NamedScope, NamedScopesHolder> o1, @NotNull final Pair<NamedScope, NamedScopesHolder> o2) {
-                return o1.getFirst().getName().equals(o2.getFirst().getName());
+                return o1.getFirst().getScopeId().equals(o2.getFirst().getScopeId());
             }
         });
         Project[] projects = ProjectManager.getInstance().getOpenProjects();
@@ -281,10 +286,10 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
 
         List<Pair<NamedScope, NamedScopesHolder>> list = new ArrayList<>(namedScopes);
 
-        Collections.sort(list, (o1, o2) -> o1.getFirst().getName().compareToIgnoreCase(o2.getFirst().getName()));
+        Collections.sort(list, (o1, o2) -> o1.getFirst().getScopeId().compareToIgnoreCase(o2.getFirst().getScopeId()));
         for (Pair<NamedScope, NamedScopesHolder> pair : list) {
             NamedScope namedScope = pair.getFirst();
-            String name = namedScope.getName();
+            String name = namedScope.getScopeId();
             TextAttributesKey textAttributesKey = ScopeAttributesUtil.getScopeTextAttributeKey(name);
             if (scheme.getAttributes(textAttributesKey) == null) {
                 scheme.setAttributes(textAttributesKey, new TextAttributes());
@@ -293,7 +298,7 @@ public class MyColorScheme extends EditorColorsSchemeImpl {
 
             PackageSet value = namedScope.getValue();
             String toolTip = holder.getDisplayName() + (value == null ? "" : ": " + value.getText());
-            descriptions.add(new SchemeTextAttributesDescription(name, ColorAndFontOptions.SCOPES_GROUP, textAttributesKey, scheme, holder.getIcon(), toolTip));
+            descriptions.add(new SchemeTextAttributesDescription(name, ColorAndFontOptions.getScopesGroup(), textAttributesKey, scheme, holder.getIcon(), toolTip));
         }
     }
 
