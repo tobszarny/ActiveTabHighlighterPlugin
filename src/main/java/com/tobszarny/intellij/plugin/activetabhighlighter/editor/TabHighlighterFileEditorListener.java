@@ -1,6 +1,7 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -17,6 +18,7 @@ import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSett
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -33,8 +35,17 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
         this.myProject = project;
         highlighterSettingsConfig = HighlighterSettingsConfig.getSettings(project);
 
-//        FileEditorManager instance = FileEditorManager.getInstance(project);
-//        project.
+        initialize();
+    }
+
+    private void initialize() {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(myProject);
+        FileEditor selectedEditor = fileEditorManager.getSelectedEditor();
+        if (selectedEditor != null) {
+            VirtualFile file = selectedEditor.getFile();
+
+            SwingUtilities.invokeLater(() -> handleSelectionChange(null, file));
+        }
     }
 
     @Override
@@ -47,31 +58,40 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
 
     @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent fileEditorManagerEvent) {
-        final Project project = fileEditorManagerEvent.getManager().getProject();
-        final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
-        final FileColorManager fileColorManager = FileColorManager.getInstance(project);
+        if (fileEditorManagerEvent.getManager().getProject().equals(myProject)) {
+            handleSelectionChange(fileEditorManagerEvent.getOldFile(), fileEditorManagerEvent.getNewFile());
+        }
+    }
 
-
-        final VirtualFile oldFile = fileEditorManagerEvent.getOldFile();
-        final VirtualFile newFile = fileEditorManagerEvent.getNewFile();
+    private void handleSelectionChange(VirtualFile oldFile, VirtualFile newFile) {
+        final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(myProject);
+        final FileColorManager fileColorManager = FileColorManager.getInstance(myProject);
 
         for (EditorWindow editorWindow : manager.getWindows()) {
-            if (oldFile != null && editorWindow.findFileComposite(oldFile) != null) {
-                setUnfocusedTabWithColorManagerDefaultColor(fileColorManager, oldFile, editorWindow);
-            }
+            unhighlightSafe(fileColorManager, oldFile, editorWindow);
 
-            if (newFile != null && editorWindow.findFileComposite(newFile) != null) {
-                setFocusedTabHighlighterColor(newFile, editorWindow);
-            }
+            highlightSafe(newFile, editorWindow);
+        }
+    }
+
+    private void highlightSafe(VirtualFile file, EditorWindow editorWindow) {
+        if (file != null && editorWindow.findFileComposite(file) != null) {
+            highlight(file, editorWindow);
+        }
+    }
+
+    private void unhighlightSafe(FileColorManager fileColorManager, VirtualFile oldFile, EditorWindow editorWindow) {
+        if (oldFile != null && editorWindow.findFileComposite(oldFile) != null) {
+            unhighlight(fileColorManager, oldFile, editorWindow);
         }
     }
 
 
-    private void setFocusedTabHighlighterColor(VirtualFile file, EditorWindow editorWindow) {
+    private void highlight(VirtualFile file, EditorWindow editorWindow) {
         setTabColor(highlighterSettingsConfig.getBackgroundColor(), file, editorWindow);
     }
 
-    private void setUnfocusedTabWithColorManagerDefaultColor(@NotNull FileColorManager fileColorManager, VirtualFile file, EditorWindow editorWindow) {
+    private void unhighlight(@NotNull FileColorManager fileColorManager, VirtualFile file, EditorWindow editorWindow) {
         setTabColor(fileColorManager.getFileColor(file), file, editorWindow);
     }
 
