@@ -32,7 +32,7 @@ intellij {
 
 patchPluginXml {
     changeNotes = """
-            <p><b>New in $pluginVersion</b></p>
+            <p><h2>New in $pluginVersion</h2></p>
             <p>
             ${changelog.get(pluginVersion.toString()).toHTML()}
             </p>
