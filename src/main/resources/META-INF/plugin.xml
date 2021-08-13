@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.tobszarny.activetabhighlighter.plugin.id</id>
     <name>Active Tab Highlighter</name>
-    <version>1.4.0</version>
+    <version>1.5.1</version>
     <vendor email="tomasz.obszarny.ga@gmail.com" url="https://github.com/tobszarny">tobszarny</vendor>
 
     <description><![CDATA[
@@ -10,6 +10,10 @@
 
     <change-notes><![CDATA[
             <html>
+              <b>Changes in version 1.5.1:</b>
+              <ul>
+                <li>Improved 2021.2 compatibility <a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/21">tobszarny/ActiveTabHighlighterPlugin#21</a></li>
+              </ul>
               <b>Changes in version 1.4.0:</b>
               <ul>
                 <li>Global configuration <a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/7">tobszarny/ActiveTabHighlighterPlugin#7</a></li>

@@ -2,6 +2,11 @@
 
 # Changelog
 
+## [1.5.1] - Jul 30, 2021
+
+### Changed
+- Improved IDEA Platform 2021.2 compatibility
+
 ## [1.5.0] - Jul 30, 2021
 
 ### Added
