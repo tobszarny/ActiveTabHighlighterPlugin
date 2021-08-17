@@ -26,6 +26,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = platformVersion
+    updateSinceUntilBuild = false
     plugins = ['IntelliLang', 'java']
     ideaDependencyCachePath = project.buildDir.absolutePath
 }
