@@ -2,10 +2,10 @@
 
 # Changelog
 
-## [1.5.1] - Jul 30, 2021
+## [1.5.1] - Aug 18, 2021
 
-### Changed
-- Improved IDEA Platform 2021.2 compatibility
+### Fixed
+- Plugin version (1.5.0) requires build 211.* or older [tobszarny/ActiveTabHighlighterPlugin#21](https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues/21)
 
 ## [1.5.0] - Jul 30, 2021
 

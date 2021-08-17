@@ -29,9 +29,13 @@ intellij {
     updateSinceUntilBuild = false
     plugins = ['IntelliLang', 'java']
     ideaDependencyCachePath = project.buildDir.absolutePath
+    updateSinceUntilBuild = false
 }
 
 patchPluginXml {
+    sinceBuild = platformSinceBuild
+
+//    untilBuild = platformUntilBuild
     changeNotes = """
             <p><h2>New in $pluginVersion</h2></p>
             <p>
