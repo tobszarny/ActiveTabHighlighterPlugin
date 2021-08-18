@@ -26,13 +26,17 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = platformVersion
+    updateSinceUntilBuild = false
     plugins = ['IntelliLang', 'java']
     ideaDependencyCachePath = project.buildDir.absolutePath
+    updateSinceUntilBuild = false
 }
 
 patchPluginXml {
+    sinceBuild = platformSinceBuild
+
     changeNotes = """
-            <p><b>New in $pluginVersion</b></p>
+            <p><h2>New in $pluginVersion</h2></p>
             <p>
             ${changelog.get(pluginVersion.toString()).toHTML()}
             </p>

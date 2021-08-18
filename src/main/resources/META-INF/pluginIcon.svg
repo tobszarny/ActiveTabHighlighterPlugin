@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<!-- Copyright (c) Since 2021 Tomasz Obszarny
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<svg
+   width="40"
+   height="40"
+   viewBox="0 0 10.583333 10.583333"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="pluginIcon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="3.0003927"
+     inkscape:cx="107.48593"
+     inkscape:cy="77.489858"
+     inkscape:window-width="1284"
+     inkscape:window-height="1045"
+     inkscape:window-x="659"
+     inkscape:window-y="95"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     units="px" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g1381">
+      <rect
+         style="fill:#707070;fill-opacity:1;stroke:#707070;stroke-width:0.0257414;stroke-miterlimit:8;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke;stop-color:#000000"
+         id="rect846"
+         width="9.499259"
+         height="5.1497097"
+         x="0.54203719"
+         y="3.2387881"
+         ry="0" />
+      <path
+         style="fill:#707070;fill-opacity:1;stroke:#999999;stroke-width:0.0257414;stroke-miterlimit:8;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke;stop-color:#000000"
+         d="m 10.041296,2.6124537 c 0,-0.2313629 -0.1767189,-0.4176185 -0.396231,-0.4176185 H 7.2332278 c -0.2195064,0 -0.3962306,0.1862556 -0.3962306,0.4176185 v 0.6263377 h 3.2042988 z"
+         id="rect846-0-2-3"
+         sodipodi:nodetypes="csscccc" />
+      <path
+         style="fill:#707070;fill-opacity:1;stroke:#999999;stroke-width:0.0257414;stroke-miterlimit:8;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke;stop-color:#000000"
+         d="m 3.7463355,2.6124542 c 0,-0.2313634 -0.1767179,-0.417619 -0.3962299,-0.417619 H 0.93826732 c -0.21951109,0 -0.39623011,0.1862556 -0.39623011,0.417619 V 3.2387883 H 3.7463355 Z"
+         id="rect846-0-2-3-9"
+         sodipodi:nodetypes="csscccc" />
+      <path
+         style="fill:#cb67c8;fill-opacity:1;stroke:#999999;stroke-width:0.0257414;stroke-miterlimit:8;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke;stop-color:#000000"
+         d="m 6.8938151,2.6124526 c 0,-0.2313618 -0.1767206,-0.4176174 -0.3962316,-0.4176174 H 4.0857476 c -0.2195114,0 -0.3962304,0.1862556 -0.3962304,0.4176174 v 0.6263342 h 3.2042979 z"
+         id="rect846-0-2"
+         sodipodi:nodetypes="csscccc" />
+    </g>
+  </g>
+</svg>
