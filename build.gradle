@@ -35,7 +35,6 @@ intellij {
 patchPluginXml {
     sinceBuild = platformSinceBuild
 
-//    untilBuild = platformUntilBuild
     changeNotes = """
             <p><h2>New in $pluginVersion</h2></p>
             <p>
