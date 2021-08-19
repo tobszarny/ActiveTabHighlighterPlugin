@@ -33,6 +33,7 @@ intellij {
 }
 
 patchPluginXml {
+    dependsOn 'patchLicense'
     sinceBuild = platformSinceBuild
 
     changeNotes = """
@@ -47,6 +48,21 @@ patchPluginXml {
 
 buildSearchableOptions {
     jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
+}
+
+tasks.register('patchLicense', Copy) {
+    from 'LICENSE.md.template'
+    into './'
+    filter { String line ->
+        {
+            println line
+            var newline = line.contains('{yyyy}') ? line.replace('{yyyy}', '(c) ' + new Date().format('yyyy')) : line
+            newline = newline.contains('{name of copyright owner}') ? newline.replace('{name of copyright owner}', pluginAuthor) : line
+
+            return newline
+        }
+    }
+    rename '.+', 'LICENSE.md'
 }
 
 runPluginVerifier {
