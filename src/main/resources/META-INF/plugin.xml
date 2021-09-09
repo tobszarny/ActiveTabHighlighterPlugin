@@ -5,7 +5,10 @@
     <vendor email="tomasz.obszarny.ga@gmail.com" url="https://github.com/tobszarny">tobszarny</vendor>
 
     <description><![CDATA[
-     Active Tab Highlighter Plugin for IntelliJ family IDEs
+     <p>Active Tab Highlighter Plugin for IntelliJ family IDEs</p>
+     <p><a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin">GitHub</a>
+     |&nbsp;<a href="https://github.com/tobszarny/ActiveTabHighlighterPlugin/issues">Issues</a>
+     </p>
     ]]></description>
 
     <change-notes><![CDATA[

@@ -27,6 +27,10 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -151,9 +155,7 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
                 if (color == null) {
                     throw new NullPointerException("Color cannot be null when enabled");
                 } else {
-                    background.red = color.getRed();
-                    background.green = color.getGreen();
-                    background.blue = color.getBlue();
+                    background = PersistentColor.builder().color(color).enabled(enabled).build();
                 }
             }
         }
@@ -175,6 +177,10 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
         }
     }
 
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class PersistentColor {
         public boolean enabled = false;
         public Integer red;
@@ -189,14 +195,13 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
             }
         }
 
-        @Override
-        public String toString() {
-            return "PersistentColor{" +
-                    (enabled ? "enabled" : "disabled") +
-                    ", red=" + red +
-                    ", green=" + green +
-                    ", blue=" + blue +
-                    '}';
+        public static class PersistentColorBuilder {
+            public PersistentColorBuilder color(Color color) {
+                this.red = color.getRed();
+                this.green = color.getGreen();
+                this.blue = color.getBlue();
+                return this;
+            }
         }
     }
 }

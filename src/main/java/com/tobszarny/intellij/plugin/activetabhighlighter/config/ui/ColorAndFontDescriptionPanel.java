@@ -58,6 +58,8 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     private ColorPanel myBackgroundChooser;
 
     private JBCheckBox myCbBackground;
+    private JCheckBox sameColorAllThemesCheckBox;
+    private ColorPanel myBackgroundChooserDark;
 
     private Map<String, EffectType> myEffectsMap;
     private boolean myUiEventsEnabled = true;
