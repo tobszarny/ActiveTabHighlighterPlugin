@@ -58,8 +58,11 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     private ColorPanel myBackgroundChooser;
 
     private JBCheckBox myCbBackground;
+    private JBCheckBox enableJBCheckBox;
     private JCheckBox sameColorAllThemesCheckBox;
     private ColorPanel myBackgroundChooserDark;
+    private JLabel darkLabel;
+    private JLabel lightLabel;
 
     private Map<String, EffectType> myEffectsMap;
     private boolean myUiEventsEnabled = true;
@@ -97,6 +100,32 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
         for (ColorPanel c : new ColorPanel[]{myBackgroundChooser}) {
             c.addActionListener(actionListener);
         }
+
+        updateSecondThemeColorPickerState();
+        sameColorAllThemesCheckBox.addActionListener(e -> updateSecondThemeColorPickerState());
+
+        updateEnabled();
+        enableJBCheckBox.addActionListener((e -> updateEnabled()));
+    }
+
+    private void updateEnabled() {
+        boolean enabled = enableJBCheckBox.isSelected();
+        boolean separateColorsForThemes = !sameColorAllThemesCheckBox.isSelected();
+        sameColorAllThemesCheckBox.setVisible(enabled);
+        myBackgroundChooser.setVisible(enabled);
+        myCbBackground.setVisible(enabled);
+        darkLabel.setVisible(enabled && separateColorsForThemes);
+        lightLabel.setVisible(enabled && separateColorsForThemes);
+        myBackgroundChooserDark.setVisible(enabled && separateColorsForThemes);
+    }
+
+    private void updateSecondThemeColorPickerState() {
+        boolean separateColorsForThemes = !sameColorAllThemesCheckBox.isSelected();
+        myBackgroundChooserDark.setEditable(separateColorsForThemes);
+        myBackgroundChooserDark.setEnabled(separateColorsForThemes);
+        myBackgroundChooserDark.setVisible(separateColorsForThemes);
+        darkLabel.setVisible(separateColorsForThemes);
+        lightLabel.setVisible(separateColorsForThemes);
     }
 
     private static void updateColorChooser(JCheckBox checkBox,

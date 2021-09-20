@@ -28,10 +28,15 @@
 
         <editorTabColorProvider
                 implementation="com.tobszarny.intellij.plugin.activetabhighlighter.editor.CustomEditorTabColorProvider"/>
+
         <projectConfigurable groupId="tools" displayName="Active Tab Highlighter Plugin"
-                                 id="preference.HighlighterSettingsConfigurable"
-                                 instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfigurable"/>
-        <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig"/>
+                                 id="preference.HighlighterSettingsProjectConfigurable"
+                                 instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfigurable"/>
+        <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfig"/>
+
+        <applicationConfigurable parentId="tools" instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsGlobalConfigurable"
+                                 id="preference.HighlighterSettingsGlobalConfigurable" displayName="Active Tab Highlighter Plugin"/>
+        <applicationService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsGlobalConfig"/>
     </extensions>
 
     <actions>

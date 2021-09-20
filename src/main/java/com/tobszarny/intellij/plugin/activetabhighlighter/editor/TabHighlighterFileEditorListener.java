@@ -30,7 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,12 +45,12 @@ import java.util.Arrays;
 public class TabHighlighterFileEditorListener implements FileEditorManagerListener, HighlighterSettingsChangeListener {
 
     private static final Logger LOGGER = Logger.getInstance(TabHighlighterFileEditorListener.class);
-    private final HighlighterSettingsConfig highlighterSettingsConfig;
+    private final HighlighterSettingsProjectConfig highlighterSettingsProjectConfig;
     private final Project myProject;
 
     public TabHighlighterFileEditorListener(Project project) {
         this.myProject = project;
-        highlighterSettingsConfig = HighlighterSettingsConfig.getSettings(project);
+        highlighterSettingsProjectConfig = HighlighterSettingsProjectConfig.getSettings(project);
 
         initialize();
     }
@@ -106,7 +106,7 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
 
 
     private void highlight(VirtualFile file, EditorWindow editorWindow) {
-        setTabColor(highlighterSettingsConfig.getBackgroundColor(), file, editorWindow);
+        setTabColor(highlighterSettingsProjectConfig.getBackgroundColor(), file, editorWindow);
     }
 
     private void unhighlight(@NotNull FileColorManager fileColorManager, VirtualFile file, EditorWindow editorWindow) {
@@ -137,7 +137,7 @@ public class TabHighlighterFileEditorListener implements FileEditorManagerListen
                 if (manager.getWindows() != null) {
                     for (EditorWindow editorWindow : manager.getWindows()) {
                         TabInfo selected = editorWindow.getTabbedPane().getTabs().getSelectedInfo();
-                        selected.setTabColor(highlighterSettingsConfig.getBackgroundColor());
+                        selected.setTabColor(highlighterSettingsProjectConfig.getBackgroundColor());
                     }
                 }
 

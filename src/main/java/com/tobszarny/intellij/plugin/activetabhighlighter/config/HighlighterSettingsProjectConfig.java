@@ -16,8 +16,6 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -39,22 +37,22 @@ import java.awt.*;
         storages = {
                 @Storage("active-tab-highlighter.xml")
         })
-public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState> {
+public class HighlighterSettingsProjectConfig implements PersistentStateComponent<HighlighterSettingsProjectConfig.PersistentState> {
 
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
-    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsConfig.class);
+    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsProjectConfig.class);
     public HighlightedTabTextAttributesDescription attributesDescription;
     PersistentState persistentState;
     private Color backgroundColor;
 
-    public HighlighterSettingsConfig() {
+    public HighlighterSettingsProjectConfig() {
         setDefaults();
     }
 
     @Nullable
-    public static HighlighterSettingsConfig getSettings(Project project) {
-        return project.getService(HighlighterSettingsConfig.class);
+    public static HighlighterSettingsProjectConfig getSettings(Project project) {
+        return project.getService(HighlighterSettingsProjectConfig.class);
     }
 
     public void setDefaults() {

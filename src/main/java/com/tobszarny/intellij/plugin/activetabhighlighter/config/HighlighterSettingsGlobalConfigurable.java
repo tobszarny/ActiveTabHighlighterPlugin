@@ -30,27 +30,24 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HighlighterSettingsConfigurable implements SearchableConfigurable {
+public class HighlighterSettingsGlobalConfigurable implements SearchableConfigurable {
 
-    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsConfigurable.class);
+    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsGlobalConfigurable.class);
 
-    public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.HighlighterSettingsConfigurable";
+    public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.HighlighterSettingsGlobalConfigurable";
     public static final String ACTIVE_TAB_HIGHLIGHTER_PLUGIN_DISPLAY_NAME = "Active Tab Highlighter Plugin";
-    private final HighlighterSettingsConfig config;
+    private final HighlighterSettingsGlobalConfig globalConfig;
     private final EditorColorsScheme editorColorsScheme;
     private final MessageBus bus;
-    private final Project myProject;
 
     private ColorAndFontDescriptionPanel colorAndFontDescriptionPanel;
 
-    public HighlighterSettingsConfigurable(Project project) {
-        this.myProject = project;
-        this.config = HighlighterSettingsConfig.getSettings(project);
+    public HighlighterSettingsGlobalConfigurable() {
+        this.globalConfig = HighlighterSettingsGlobalConfig.getSettings();
         this.editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
         bus = ApplicationManager.getApplication().getMessageBus();
     }
 
-    @NotNull
     @Override
     public String getId() {
         return PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE;
@@ -89,7 +86,7 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
     @Override
     public boolean isModified() {
 //        LOGGER.info("***** isModified() ");
-        HighlightedTabTextAttributesDescription attributesDescription = config.getAttributesDescription();
+        HighlightedTabTextAttributesDescription attributesDescription = globalConfig.getAttributesDescription();
 
 //        colorAndFontDescriptionPanel.is
 //        return settingsGUI.isModified();
@@ -103,8 +100,8 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 
         bus.syncPublisher(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).beforeSettingsChanged(new SettingsChangedEvent(this));
 
-        config.storeBackgroundColorInformation(colorAndFontDescriptionPanel.isBackgroundColorEnabled(), colorAndFontDescriptionPanel.getSelectedBackgroundColor());
-        HighlightedTabTextAttributesDescription attributesDescription = config.getAttributesDescription();
+        globalConfig.storeBackgroundColorInformation(colorAndFontDescriptionPanel.isBackgroundColorEnabled(), colorAndFontDescriptionPanel.getSelectedBackgroundColor());
+        HighlightedTabTextAttributesDescription attributesDescription = globalConfig.getAttributesDescription();
         colorAndFontDescriptionPanel.apply(attributesDescription, editorColorsScheme);
 //        config.storeBackgroundColor(colorAndFontDescriptionPanel.getSelectedBackgroundColor());
 
@@ -114,7 +111,7 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 
     @Override
     public void reset() {
-        colorAndFontDescriptionPanel.reset(config.getAttributesDescription());
+        colorAndFontDescriptionPanel.reset(globalConfig.getAttributesDescription());
     }
 
 //    @Override

@@ -1,6 +1,9 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 # Changelog
+## [1.5.2] - Sept 9, 2021
+### Added
+- Plugin icon added
 
 ## [1.5.1] - Aug 18, 2021
 ### Added
