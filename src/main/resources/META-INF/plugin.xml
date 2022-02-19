@@ -34,8 +34,8 @@
                                  instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfigurable"/>
         <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfig"/>
 
-        <applicationConfigurable parentId="tools" instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsGlobalConfigurable"
-                                 id="preference.HighlighterSettingsGlobalConfigurable" displayName="Active Tab Highlighter Plugin"/>
+<!--        <applicationConfigurable parentId="tools" instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsGlobalConfigurable"-->
+<!--                                 id="preference.HighlighterSettingsGlobalConfigurable" displayName="Active Tab Highlighter Plugin"/>-->
         <applicationService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsGlobalConfig"/>
     </extensions>
 

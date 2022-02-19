@@ -32,7 +32,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.FontUtil;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,16 +52,32 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
 
     private final EventDispatcher<Listener> myDispatcher = EventDispatcher.create(Listener.class);
 
-    private JPanel myPanel;
+    private JPanel mainPanel;
 
-    private ColorPanel myBackgroundChooser;
 
-    private JBCheckBox myCbBackground;
+    //region Global Panel
+    private JPanel globalPanel;
+    private JBCheckBox backgroundCheckBox;
     private JBCheckBox enableJBCheckBox;
     private JCheckBox sameColorAllThemesCheckBox;
-    private ColorPanel myBackgroundChooserDark;
+    private ColorPanel backgroundChooser;
+    private ColorPanel backgroundDarkChooser;
     private JLabel darkLabel;
     private JLabel lightLabel;
+    private JLabel globalLabel;
+    //endregion
+
+    //region Project Panel
+    private JPanel projectPanel;
+    private JLabel projectPrivateLabel;
+    private JBCheckBox projectOverrideJBCheckBox;
+    private JCheckBox sameColorAllThemesProjectCheckBox;
+    private ColorPanel backgroundProjectChooser;
+    private ColorPanel backgroundDarkProjectChooser;
+    private JBCheckBox backgroundProjectCheckBox;
+    private JLabel lightProjectLabel;
+    private JLabel darkProjectLabel;
+    //endregion
 
     private Map<String, EffectType> myEffectsMap;
     private boolean myUiEventsEnabled = true;
@@ -80,52 +95,146 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
 
     public ColorAndFontDescriptionPanel() {
         super(new BorderLayout());
-        add(myPanel, BorderLayout.CENTER);
+
+        JBEmptyBorder titleBorder = JBUI.Borders.empty(0, 0, 4, 0);
+        globalLabel.setBorder(titleBorder);
+        projectPrivateLabel.setBorder(titleBorder);
+
+//        Border thisBorder = BorderFactory.createTitledBorder("Global");
+//        globalPanel.setBorder(thisBorder);
+//        Border this2Border = BorderFactory.createTitledBorder("Project private");
+//        projectPanel.setBorder(this2Border);
+
+        add(mainPanel, BorderLayout.CENTER);
 
         setBorder(JBUI.Borders.empty(4, 0, 4, 4));
         //noinspection unchecked
-        //noinspection unchecked
-
-        ActionListener actionListener = e -> {
-            if (myUiEventsEnabled) {
-                myBackgroundChooser.setEnabled(myCbBackground.isSelected());
-
-                myDispatcher.getMulticaster().onSettingsChanged(e);
-            }
-        };
-
-        for (JBCheckBox c : new JBCheckBox[]{myCbBackground}) {
-            c.addActionListener(actionListener);
-        }
-        for (ColorPanel c : new ColorPanel[]{myBackgroundChooser}) {
-            c.addActionListener(actionListener);
-        }
-
-        updateSecondThemeColorPickerState();
-        sameColorAllThemesCheckBox.addActionListener(e -> updateSecondThemeColorPickerState());
 
         updateEnabled();
-        enableJBCheckBox.addActionListener((e -> updateEnabled()));
+        initGlobalPanelComponentsBehavior();
+        initProjectPanelComponentsBehavior();
+    }
+
+    private void initProjectPanelComponentsBehavior() {
+        projectOverrideJBCheckBox.addActionListener(e -> {
+            updateProjectSection();
+            copyProjectSectionDefaultValues();
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        sameColorAllThemesProjectCheckBox.addActionListener(e -> {
+            updateProjectSection();
+            if(!sameColorAllThemesProjectCheckBox.isSelected()) {
+                backgroundDarkProjectChooser.setSelectedColor(backgroundDarkChooser.getSelectedColor());
+            }
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        backgroundProjectCheckBox.addActionListener(e -> {
+            updateProjectSection();
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        backgroundProjectChooser.addActionListener(e -> {
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        backgroundDarkProjectChooser.addActionListener(e -> {
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+    }
+
+    private void initGlobalPanelComponentsBehavior() {
+        enableJBCheckBox.addActionListener((e -> {
+            updateEnabled();
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        }));
+
+        sameColorAllThemesCheckBox.addActionListener(e -> {
+            updateGlobalSection();
+            if(!sameColorAllThemesCheckBox.isSelected()) {
+                backgroundDarkChooser.setSelectedColor(backgroundChooser.getSelectedColor());
+            }
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        backgroundCheckBox.addActionListener(e -> {
+            updateGlobalSection();
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        backgroundChooser.addActionListener(e -> {
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+        backgroundDarkChooser.addActionListener(e -> {
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
     }
 
     private void updateEnabled() {
+        updateGlobalSection();
+        updateProjectSection();
+    }
+
+    private void updateGlobalSection() {
         boolean enabled = enableJBCheckBox.isSelected();
         boolean separateColorsForThemes = !sameColorAllThemesCheckBox.isSelected();
         sameColorAllThemesCheckBox.setVisible(enabled);
-        myBackgroundChooser.setVisible(enabled);
-        myCbBackground.setVisible(enabled);
-        darkLabel.setVisible(enabled && separateColorsForThemes);
+        backgroundCheckBox.setVisible(enabled);
+        backgroundChooser.setVisible(enabled);
+        backgroundChooser.setEnabled(backgroundCheckBox.isSelected());
         lightLabel.setVisible(enabled && separateColorsForThemes);
-        myBackgroundChooserDark.setVisible(enabled && separateColorsForThemes);
+        darkLabel.setVisible(enabled && separateColorsForThemes);
+        backgroundDarkChooser.setVisible(enabled && separateColorsForThemes);
+        backgroundDarkChooser.setEnabled(backgroundCheckBox.isSelected());
+        projectOverrideJBCheckBox.setVisible(enabled);
+        projectPrivateLabel.setVisible(enabled);
     }
 
-    private void updateSecondThemeColorPickerState() {
-        boolean separateColorsForThemes = !sameColorAllThemesCheckBox.isSelected();
-        myBackgroundChooserDark.setEditable(separateColorsForThemes);
-        myBackgroundChooserDark.setEnabled(separateColorsForThemes);
-        myBackgroundChooserDark.setVisible(separateColorsForThemes);
-        darkLabel.setVisible(separateColorsForThemes);
-        lightLabel.setVisible(separateColorsForThemes);
+    private void updateProjectSection() {
+        updateProjectSectionVisibility();
+        backgroundProjectChooser.setEnabled(backgroundProjectCheckBox.isSelected());
+        backgroundDarkProjectChooser.setEnabled(backgroundProjectCheckBox.isSelected());
+    }
+
+    private void copyProjectSectionDefaultValues() {
+        sameColorAllThemesProjectCheckBox.setSelected(sameColorAllThemesCheckBox.isSelected());
+        sameColorAllThemesProjectCheckBox.setSelected(sameColorAllThemesCheckBox.isSelected());
+        backgroundProjectCheckBox.setSelected(backgroundCheckBox.isSelected());
+        backgroundProjectChooser.setSelectedColor(backgroundChooser.getSelectedColor());
+        backgroundDarkProjectChooser.setSelectedColor(backgroundDarkChooser.getSelectedColor());
+    }
+
+    private void updateProjectSectionVisibility() {
+        boolean override = enableJBCheckBox.isSelected() && projectOverrideJBCheckBox.isSelected();
+        boolean separateColorsForThemes = !sameColorAllThemesProjectCheckBox.isSelected();
+        sameColorAllThemesProjectCheckBox.setVisible(override);
+        backgroundProjectCheckBox.setVisible(override);
+        backgroundProjectChooser.setVisible(override);
+        backgroundDarkProjectChooser.setVisible(override && separateColorsForThemes);
+        darkProjectLabel.setVisible(override && separateColorsForThemes);
+        lightProjectLabel.setVisible(override && separateColorsForThemes);
     }
 
     private static void updateColorChooser(JCheckBox checkBox,
@@ -153,7 +262,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
         LOGGER.debug("resetDefault() called");
         try {
             myUiEventsEnabled = false;
-            updateColorChooser(myCbBackground, myBackgroundChooser, false, false, null);
+            updateColorChooser(backgroundCheckBox, backgroundChooser, false, false, null);
         } finally {
             myUiEventsEnabled = true;
         }
@@ -179,7 +288,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
 //            updateColorChooser(myCbForeground, myForegroundChooser, description.isForegroundEnabled(),
 //                    description.isForegroundChecked(), description.getForegroundColor());
 
-            updateColorChooser(myCbBackground, myBackgroundChooser, description.isBackgroundEnabled(),
+            updateColorChooser(backgroundCheckBox, backgroundChooser, description.isBackgroundEnabled(),
                     description.isBackgroundChecked(), description.getBackgroundColor());
 
 //            updateColorChooser(myCbErrorStripe, myErrorStripeColorChooser, description.isErrorStripeEnabled(),
@@ -226,7 +335,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     }
 
     private void setEditEnabled(boolean isEditEnabled, ColorAndFontDescription description) {
-        myCbBackground.setEnabled(isEditEnabled && description.isBackgroundEnabled());
+        backgroundCheckBox.setEnabled(isEditEnabled && description.isBackgroundEnabled());
 //        myCbForeground.setEnabled(isEditEnabled && description.isForegroundEnabled());
 //        myCbBold.setEnabled(isEditEnabled && description.isFontEnabled());
 //        myCbItalic.setEnabled(isEditEnabled && description.isFontEnabled());
@@ -235,7 +344,7 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
 //        myErrorStripeColorChooser.setEditable(isEditEnabled);
 //        myEffectsColorChooser.setEditable(isEditEnabled);
 //        myForegroundChooser.setEditable(isEditEnabled);
-        myBackgroundChooser.setEditable(isEditEnabled);
+        backgroundChooser.setEditable(isEditEnabled);
     }
 
     public void apply(@NotNull EditorSchemeAttributeDescriptor attrDescription, EditorColorsScheme scheme) {
@@ -268,8 +377,8 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
             description.setFontType(fontType);
 //            description.setForegroundChecked(myCbForeground.isSelected());
 //            description.setForegroundColor(myForegroundChooser.getSelectedColor());
-            description.setBackgroundChecked(myCbBackground.isSelected());
-            description.setBackgroundColor(myBackgroundChooser.getSelectedColor());
+            description.setBackgroundChecked(backgroundCheckBox.isSelected());
+            description.setBackgroundColor(backgroundChooser.getSelectedColor());
 //            description.setErrorStripeChecked(myCbErrorStripe.isSelected());
 //            description.setErrorStripeColor(myErrorStripeColorChooser.getSelectedColor());
 //            description.setEffectsColorChecked(myCbEffects.isSelected());
@@ -289,11 +398,11 @@ public class ColorAndFontDescriptionPanel extends JPanel implements OptionsPanel
     }
 
     public boolean isBackgroundColorEnabled() {
-        return myCbBackground.isSelected();
+        return backgroundCheckBox.isSelected();
     }
 
     public Color getSelectedBackgroundColor() {
-        return myCbBackground.isSelected() ? myBackgroundChooser.getSelectedColor() : null;
+        return backgroundCheckBox.isSelected() ? backgroundChooser.getSelectedColor() : null;
     }
 
 }

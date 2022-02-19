@@ -36,6 +36,7 @@ public class HighlighterSettingsProjectConfigurable implements SearchableConfigu
 
     public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.HighlighterSettingsProjectConfigurable";
     public static final String ACTIVE_TAB_HIGHLIGHTER_PLUGIN_DISPLAY_NAME = "Active Tab Highlighter Plugin";
+    private final HighlighterSettingsGlobalConfig globalConfig;
     private final HighlighterSettingsProjectConfig projectConfig;
     private final EditorColorsScheme editorColorsScheme;
     private final MessageBus bus;
@@ -45,6 +46,7 @@ public class HighlighterSettingsProjectConfigurable implements SearchableConfigu
 
     public HighlighterSettingsProjectConfigurable(Project project) {
         this.myProject = project;
+        this.globalConfig = HighlighterSettingsGlobalConfig.getSettings();
         this.projectConfig = HighlighterSettingsProjectConfig.getSettings(project);
         this.editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
         bus = ApplicationManager.getApplication().getMessageBus();
