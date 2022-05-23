@@ -30,7 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.HighlighterSettingsProjectConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import org.jetbrains.annotations.NotNull;
 

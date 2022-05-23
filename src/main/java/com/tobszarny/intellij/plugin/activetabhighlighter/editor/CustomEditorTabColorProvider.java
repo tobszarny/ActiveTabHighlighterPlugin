@@ -24,7 +24,8 @@ import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsProjectConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.HighlighterSettingsConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.HighlighterSettingsProjectConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +44,7 @@ public class CustomEditorTabColorProvider implements EditorTabColorProvider {
     public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         final FileEditorManagerEx fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project);
         FileColorManager fileColorManager = FileColorManager.getInstance(project);
-        HighlighterSettingsProjectConfig highlighterSettingsProjectConfig = HighlighterSettingsProjectConfig.getSettings(project);
+        HighlighterSettingsConfig highlighterSettingsProjectConfig = HighlighterSettingsConfig.getSettings(project);
 
         if (highlighterSettingsProjectConfig.isBackgroundColorUsed()) {
             EditorWindow activeWindow = fileEditorManagerEx.getCurrentWindow();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Tomasz Obszarny
+ * Copyright (c) 2022 Tomasz Obszarny
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config.model;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,6 +23,9 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlightedTabTextAttributesDescription;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.ColorAndFontDescriptionPanel;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -30,24 +33,31 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HighlighterSettingsGlobalConfigurable implements SearchableConfigurable {
+public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 
-    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsGlobalConfigurable.class);
+    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsConfigurable.class);
 
-    public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.HighlighterSettingsGlobalConfigurable";
+    public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.HighlighterSettingsConfigurable";
     public static final String ACTIVE_TAB_HIGHLIGHTER_PLUGIN_DISPLAY_NAME = "Active Tab Highlighter Plugin";
     private final HighlighterSettingsGlobalConfig globalConfig;
+    private final HighlighterSettingsProjectConfig projectConfig;
     private final EditorColorsScheme editorColorsScheme;
     private final MessageBus bus;
+    private final Project myProject;
 
     private ColorAndFontDescriptionPanel colorAndFontDescriptionPanel;
 
-    public HighlighterSettingsGlobalConfigurable() {
+    public HighlighterSettingsConfigurable(Project project) {
+        this.myProject = project;
         this.globalConfig = HighlighterSettingsGlobalConfig.getSettings();
+        this.projectConfig = HighlighterSettingsProjectConfig.getSettings(project);
         this.editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
         bus = ApplicationManager.getApplication().getMessageBus();
     }
 
+    //TODO: Make this class replace function of  inferring properties currently hosted by HighlighterSettingsConfig
+
+    @NotNull
     @Override
     public String getId() {
         return PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE;
@@ -80,13 +90,21 @@ public class HighlighterSettingsGlobalConfigurable implements SearchableConfigur
 //        attributes.setFontType(Font.PLAIN);
 //        attributes.setEffectType(EffectType.BOXED);
         colorAndFontDescriptionPanel = new ColorAndFontDescriptionPanel();
+        primeComponent();
+        colorAndFontDescriptionPanel.primeVisibilityAndBehavior();
         return colorAndFontDescriptionPanel.getPanel();
+    }
+
+    private void primeComponent() {
+        // TODO: this may be obsolete when todo below are done, as reset will prime the component
+        colorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.persistentConfig);
+        colorAndFontDescriptionPanel.primeProjectPanel(projectConfig.persistentConfig);
     }
 
     @Override
     public boolean isModified() {
 //        LOGGER.info("***** isModified() ");
-        HighlightedTabTextAttributesDescription attributesDescription = globalConfig.getAttributesDescription();
+        HighlightedTabTextAttributesDescription attributesDescription = projectConfig.getAttributesDescription();
 
 //        colorAndFontDescriptionPanel.is
 //        return settingsGUI.isModified();
@@ -100,8 +118,14 @@ public class HighlighterSettingsGlobalConfigurable implements SearchableConfigur
 
         bus.syncPublisher(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).beforeSettingsChanged(new SettingsChangedEvent(this));
 
-        globalConfig.storeBackgroundColorInformation(colorAndFontDescriptionPanel.isBackgroundColorEnabled(), colorAndFontDescriptionPanel.getSelectedBackgroundColor());
+        globalConfig.storeConfig(colorAndFontDescriptionPanel.generateGlobalConfig());
+        projectConfig.storeConfig(colorAndFontDescriptionPanel.generateProjectConfig());
+
+        HighlightedTabTextAttributesDescription attributesProjectDescription = projectConfig.getAttributesDescription();
         HighlightedTabTextAttributesDescription attributesDescription = globalConfig.getAttributesDescription();
+
+        //TODO: calculate attributesDescription here
+
         colorAndFontDescriptionPanel.apply(attributesDescription, editorColorsScheme);
 //        config.storeBackgroundColor(colorAndFontDescriptionPanel.getSelectedBackgroundColor());
 
@@ -111,7 +135,8 @@ public class HighlighterSettingsGlobalConfigurable implements SearchableConfigur
 
     @Override
     public void reset() {
-        colorAndFontDescriptionPanel.reset(globalConfig.getAttributesDescription());
+        //FIXME: this breaks the coloring, called immediately after opening the dialog
+        colorAndFontDescriptionPanel.reset(projectConfig.getAttributesDescription());
     }
 
 //    @Override
@@ -119,5 +144,6 @@ public class HighlighterSettingsGlobalConfigurable implements SearchableConfigur
 //        LOGGER.info("***** disposeUIResources() ");
 //        colorAndFontDescriptionPanel = null;
 //    }
+
 
 }
