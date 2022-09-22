@@ -26,7 +26,7 @@ import com.intellij.util.messages.MessageBus;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlightedTabTextAttributesDescription;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.ColorAndFontDescriptionPanel;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.TabColorAndFontDescriptionPanel;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
     private final MessageBus bus;
     private final Project myProject;
 
-    private ColorAndFontDescriptionPanel colorAndFontDescriptionPanel;
+    private TabColorAndFontDescriptionPanel tabColorAndFontDescriptionPanel;
 
     public HighlighterSettingsConfigurable(Project project) {
         this.myProject = project;
@@ -89,16 +89,16 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 //        attributes.setBackgroundColor(config.getBackgroundColor());
 //        attributes.setFontType(Font.PLAIN);
 //        attributes.setEffectType(EffectType.BOXED);
-        colorAndFontDescriptionPanel = new ColorAndFontDescriptionPanel();
+        tabColorAndFontDescriptionPanel = new TabColorAndFontDescriptionPanel();
         primeComponent();
-        colorAndFontDescriptionPanel.primeVisibilityAndBehavior();
-        return colorAndFontDescriptionPanel.getPanel();
+//        tabColorAndFontDescriptionPanel.primeVisibilityAndBehavior();
+        return tabColorAndFontDescriptionPanel.getPanel();
     }
 
     private void primeComponent() {
         // TODO: this may be obsolete when todo below are done, as reset will prime the component
-        colorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.persistentConfig);
-        colorAndFontDescriptionPanel.primeProjectPanel(projectConfig.persistentConfig);
+//        tabColorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.persistentConfig);
+//        tabColorAndFontDescriptionPanel.primeProjectPanel(projectConfig.persistentConfig);
     }
 
     @Override
@@ -118,25 +118,43 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 
         bus.syncPublisher(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).beforeSettingsChanged(new SettingsChangedEvent(this));
 
-        globalConfig.storeConfig(colorAndFontDescriptionPanel.generateGlobalConfig());
-        projectConfig.storeConfig(colorAndFontDescriptionPanel.generateProjectConfig());
-
-        HighlightedTabTextAttributesDescription attributesProjectDescription = projectConfig.getAttributesDescription();
-        HighlightedTabTextAttributesDescription attributesDescription = globalConfig.getAttributesDescription();
+        globalConfig.storeConfig(tabColorAndFontDescriptionPanel.generateGlobalConfig());
+        projectConfig.storeConfig(tabColorAndFontDescriptionPanel.generateProjectConfig());
 
         //TODO: calculate attributesDescription here
 
-        colorAndFontDescriptionPanel.apply(attributesDescription, editorColorsScheme);
-//        config.storeBackgroundColor(colorAndFontDescriptionPanel.getSelectedBackgroundColor());
+        PersistentConfig attributesDescription = effectiveConfig(
+                globalConfig.persistentConfig, projectConfig.persistentConfig);
+
+//        colorAndFontDescriptionPanel.apply(colorAndFontDescriptionPanel.generateGlobalConfig()., editorColorsScheme);
+        HighlighterSettingsConfig.getSettings(myProject).storeConfiguration(attributesDescription);
 
 
         bus.syncPublisher(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).settingsChanged(new SettingsChangedEvent(this));
     }
 
+    private PersistentConfig effectiveConfig(PersistentConfig globalConfig, PersistentConfig projectConfig) {
+        PersistentConfig resultingConfig = null;
+        if (projectConfig.enabled) {
+            resultingConfig = projectConfig;
+        } else {
+            resultingConfig = globalConfig;
+        }
+
+//        TextAttributes attributes = new TextAttributes();
+//        attributes.setBackgroundColor(resultingConfig.background.toColor());
+//        TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(Constants.EXTERNAL_ID);
+//        HighlightedTabTextAttributesDescription attributesDescription =
+//                new HighlightedTabTextAttributesDescription(Constants.GROUP, Constants.GROUP, attributes,
+//                        textAttributesKey, EditorColorsManager.getInstance().getGlobalScheme());
+
+        return resultingConfig;
+    }
+
     @Override
     public void reset() {
         //FIXME: this breaks the coloring, called immediately after opening the dialog
-        colorAndFontDescriptionPanel.reset(projectConfig.getAttributesDescription());
+//        colorAndFontDescriptionPanel.reset(projectConfig.getAttributesDescription());
     }
 
 //    @Override

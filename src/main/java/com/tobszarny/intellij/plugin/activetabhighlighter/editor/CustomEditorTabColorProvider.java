@@ -46,7 +46,7 @@ public class CustomEditorTabColorProvider implements EditorTabColorProvider {
         FileColorManager fileColorManager = FileColorManager.getInstance(project);
         HighlighterSettingsConfig highlighterSettingsProjectConfig = HighlighterSettingsConfig.getSettings(project);
 
-        if (highlighterSettingsProjectConfig.isBackgroundColorUsed()) {
+        if (highlighterSettingsProjectConfig.isEnabled()) {
             EditorWindow activeWindow = fileEditorManagerEx.getCurrentWindow();
             if (activeWindow != null) {
                 final EditorWithProviderComposite selectedEditor = activeWindow.getSelectedEditor();

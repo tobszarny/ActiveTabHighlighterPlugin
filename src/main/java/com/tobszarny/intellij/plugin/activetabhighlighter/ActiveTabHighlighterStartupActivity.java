@@ -30,7 +30,7 @@ import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabHighlighterF
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Main application ActiveTabsHighlighter service
+ * Main application ActiveTabHighlighter service
  * Created by Tomasz Obszarny on 19.01.2017.
  */
 public class ActiveTabHighlighterStartupActivity implements StartupActivity, DumbAware {

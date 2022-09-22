@@ -23,8 +23,8 @@ import java.awt.*;
 
 public class HighlighterSettingsConfig {
     private final Project myProject;
-    private final HighlighterSettingsGlobalConfig globalConfig;
-    private HighlighterSettingsProjectConfig projectConfig;
+
+    private PersistentConfig config = PersistentConfig.builder().enabled(false).build();
 
     @Nullable
     public static HighlighterSettingsConfig getSettings(Project project) {
@@ -33,19 +33,17 @@ public class HighlighterSettingsConfig {
 
     public HighlighterSettingsConfig(Project project) {
         this.myProject = project;
-        this.globalConfig = HighlighterSettingsGlobalConfig.getSettings();
-        this.projectConfig = HighlighterSettingsProjectConfig.getSettings(project);
     }
 
-    public boolean isBackgroundColorUsed() {
-        return projectConfig.isBackgroundColorUsed() || globalConfig.isBackgroundColorUsed();
+    public void storeConfiguration(PersistentConfig config){
+        this.config = config;
+    }
+
+    public boolean isEnabled() {
+        return config.enabled;
     }
 
     public Color getBackgroundColor() {
-        if (projectConfig.isBackgroundColorUsed()) {
-            return projectConfig.getBackgroundColor();
-        }
-
-        return globalConfig.persistentConfig.getInferredBackgroundColor();
+        return config.getInferredBackgroundColor();
     }
 }

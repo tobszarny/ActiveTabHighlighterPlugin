@@ -33,12 +33,10 @@ import java.awt.*;
 
 @State(name = "ActiveTabHighlighterGlobalConfiguration",
         storages = {
-                @Storage(value = "active-tab-highlighter-global.xml", roamingType = RoamingType.PER_OS)
+                @Storage(value = "active-tab-highlighter-global-v2.xml", roamingType = RoamingType.PER_OS)
         })
 public class HighlighterSettingsGlobalConfig implements PersistentStateComponent<PersistentConfig> {
 
-    public static final String GROUP = "Highlighter";
-    public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
     private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsGlobalConfig.class);
     public HighlightedTabTextAttributesDescription attributesDescription;
     PersistentConfig persistentConfig;
@@ -59,8 +57,8 @@ public class HighlighterSettingsGlobalConfig implements PersistentStateComponent
         persistentConfig.background.color = "#AD2E9C";
         TextAttributes attributes = new TextAttributes();
         attributes.setBackgroundColor(persistentConfig.background.toColor());
-        TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(EXTERNAL_ID);
-        attributesDescription = new HighlightedTabTextAttributesDescription(GROUP, GROUP, attributes, textAttributesKey, EditorColorsManager.getInstance().getGlobalScheme());
+        TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(Constants.EXTERNAL_ID);
+        attributesDescription = new HighlightedTabTextAttributesDescription(Constants.GROUP, Constants.GROUP, attributes, textAttributesKey, EditorColorsManager.getInstance().getGlobalScheme());
     }
 
     @Nullable
