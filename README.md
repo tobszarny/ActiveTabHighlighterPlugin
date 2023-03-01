@@ -8,6 +8,9 @@ What is it:
 - gets the job of distinct highlight of active tab done (I'm personally using Darcula theme, and this has been 
   a nightmare for me for quite a while, to see the active tab, amongst the others)
 - yes, the highlight colour is somewhat pink by default, now you can change it in *Settings > Tools > Active Tab Highlighter Plugin*
+## Plugin description
+<!-- Plugin description -->
+<!-- Plugin description end -->
 
 ## Installation instructions
 

@@ -1,26 +1,20 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter.config.ui;
 
-import com.intellij.application.options.colors.ColorAndFontDescription;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.EditorSchemeAttributeDescriptor;
-import com.intellij.openapi.editor.colors.EditorSchemeAttributeDescriptorWithPath;
 import com.intellij.openapi.editor.markup.EffectType;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.options.colors.AbstractKeyDescriptor;
-import com.intellij.openapi.options.colors.ColorAndFontDescriptorsProvider;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.ColorPanel;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.FontUtil;
 import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentColor;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsGlobalConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsProjectConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,11 +73,6 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
         JBEmptyBorder titleBorder = JBUI.Borders.empty(0, 0, 4, 0);
         globalLabel.setBorder(titleBorder);
         projectPrivateLabel.setBorder(titleBorder);
-
-//        Border thisBorder = BorderFactory.createTitledBorder("Global");
-//        globalPanel.setBorder(thisBorder);
-//        Border this2Border = BorderFactory.createTitledBorder("Project private");
-//        projectPanel.setBorder(this2Border);
 
         add(mainPanel, BorderLayout.CENTER);
 
@@ -170,29 +159,34 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
     public PersistentConfig generateGlobalConfig() {
         return PersistentConfig.builder()
                 .enabled(enableJBCheckBox.isSelected())
-//                .acrossThemes(sameColorAllThemesCheckBox.isSelected())
-//                .backgroundEnabled(backgroundCheckBox.isSelected())
-//                .background(PersistentColor.builder()
-//                        .fromColor(backgroundChooser.getSelectedColor())
-//                        .build())
-//                .backgroundDark(PersistentColor.builder()
-//                        .fromColor(backgroundDarkChooser.getSelectedColor())
-//                        .build())
+                .acrossThemes(globalColorAndFontDescriptionPanel.isSameColorAllThemesCheckBoxSelected())
+                .backgroundEnabled(globalColorAndFontDescriptionPanel.isBackgroundCheckBoxSelected())
+                .background(PersistentColor.builder()
+                        .fromColor(globalColorAndFontDescriptionPanel.getBackgroundChooserColor())
+                        .build())
+                .backgroundDark(PersistentColor.builder()
+                        .fromColor(globalColorAndFontDescriptionPanel.getBackgroundDarkChooserColor())
+                        .build())
                 .build();
     }
 
     public PersistentConfig generateProjectConfig() {
         return PersistentConfig.builder()
                 .enabled(projectOverrideJBCheckBox.isSelected())
-//                .acrossThemes(sameColorAllThemesProjectCheckBox.isSelected())
-//                .backgroundEnabled(backgroundProjectCheckBox.isSelected())
-//                .background(PersistentColor.builder()
-//                        .fromColor(backgroundProjectChooser.getSelectedColor())
-//                        .build())
-//                .backgroundDark(PersistentColor.builder()
-//                        .fromColor(backgroundDarkProjectChooser.getSelectedColor())
-//                        .build())
+                .acrossThemes(projectColorAndFontDescriptionPanel.isSameColorAllThemesCheckBoxSelected())
+                .backgroundEnabled(projectColorAndFontDescriptionPanel.isBackgroundCheckBoxSelected())
+                .background(PersistentColor.builder()
+                        .fromColor(projectColorAndFontDescriptionPanel.getBackgroundChooserColor())
+                        .build())
+                .backgroundDark(PersistentColor.builder()
+                        .fromColor(projectColorAndFontDescriptionPanel.getBackgroundDarkChooserColor())
+                        .build())
                 .build();
+    }
+
+    public boolean anyModified(SettingsGlobalConfig globalConfig, SettingsProjectConfig projectConfig) {
+        //TODO: implement me
+        return false;
     }
 
 

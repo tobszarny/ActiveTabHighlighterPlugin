@@ -23,8 +23,8 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlightedTabTextAttributesDescription;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.TabTextAttributesDescription;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.TabColorAndFontDescriptionPanel;
 import org.jetbrains.annotations.Nls;
@@ -33,29 +33,29 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HighlighterSettingsConfigurable implements SearchableConfigurable {
+public class SettingsConfigurable implements SearchableConfigurable {
 
-    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsConfigurable.class);
+    private static final Logger LOGGER = Logger.getInstance(SettingsConfigurable.class);
 
-    public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.HighlighterSettingsConfigurable";
+    public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.SettingsConfigurable";
     public static final String ACTIVE_TAB_HIGHLIGHTER_PLUGIN_DISPLAY_NAME = "Active Tab Highlighter Plugin";
-    private final HighlighterSettingsGlobalConfig globalConfig;
-    private final HighlighterSettingsProjectConfig projectConfig;
+    private final SettingsGlobalConfig globalConfig;
+    private final SettingsProjectConfig projectConfig;
     private final EditorColorsScheme editorColorsScheme;
     private final MessageBus bus;
     private final Project myProject;
 
     private TabColorAndFontDescriptionPanel tabColorAndFontDescriptionPanel;
 
-    public HighlighterSettingsConfigurable(Project project) {
+    public SettingsConfigurable(Project project) {
         this.myProject = project;
-        this.globalConfig = HighlighterSettingsGlobalConfig.getSettings();
-        this.projectConfig = HighlighterSettingsProjectConfig.getSettings(project);
+        this.globalConfig = SettingsGlobalConfig.getSettings();
+        this.projectConfig = SettingsProjectConfig.getSettings(project);
         this.editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
         bus = ApplicationManager.getApplication().getMessageBus();
     }
 
-    //TODO: Make this class replace function of  inferring properties currently hosted by HighlighterSettingsConfig
+    //TODO: Make this class replace function of  inferring properties currently hosted by SettingsConfig
 
     @NotNull
     @Override
@@ -84,7 +84,7 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-//        LOGGER.info("***** createComponent() ");
+        LOGGER.info("***** createComponent() ");
 //        TextAttributes attributes = new TextAttributes();
 //        attributes.setBackgroundColor(config.getBackgroundColor());
 //        attributes.setFontType(Font.PLAIN);
@@ -103,12 +103,11 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 
     @Override
     public boolean isModified() {
-//        LOGGER.info("***** isModified() ");
-        HighlightedTabTextAttributesDescription attributesDescription = projectConfig.getAttributesDescription();
+        LOGGER.info("***** isModified() ");
+        TabTextAttributesDescription attributesDescription = projectConfig.getAttributesDescription();
 
 //        colorAndFontDescriptionPanel.is
-//        return settingsGUI.isModified();
-        return true;
+        return tabColorAndFontDescriptionPanel.anyModified(globalConfig, projectConfig);
     }
 
     @Override
@@ -116,7 +115,7 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 //        LOGGER.info("***** apply() ");
 //        settingsGUI.apply();
 
-        bus.syncPublisher(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).beforeSettingsChanged(new SettingsChangedEvent(this));
+        bus.syncPublisher(SettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).beforeSettingsChanged(new SettingsChangedEvent(this));
 
         globalConfig.storeConfig(tabColorAndFontDescriptionPanel.generateGlobalConfig());
         projectConfig.storeConfig(tabColorAndFontDescriptionPanel.generateProjectConfig());
@@ -127,10 +126,10 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
                 globalConfig.persistentConfig, projectConfig.persistentConfig);
 
 //        colorAndFontDescriptionPanel.apply(colorAndFontDescriptionPanel.generateGlobalConfig()., editorColorsScheme);
-        HighlighterSettingsConfig.getSettings(myProject).storeConfiguration(attributesDescription);
+        SettingsConfig.getSettings(myProject).storeConfiguration(attributesDescription);
 
 
-        bus.syncPublisher(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).settingsChanged(new SettingsChangedEvent(this));
+        bus.syncPublisher(SettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).settingsChanged(new SettingsChangedEvent(this));
     }
 
     private PersistentConfig effectiveConfig(PersistentConfig globalConfig, PersistentConfig projectConfig) {
@@ -144,8 +143,8 @@ public class HighlighterSettingsConfigurable implements SearchableConfigurable {
 //        TextAttributes attributes = new TextAttributes();
 //        attributes.setBackgroundColor(resultingConfig.background.toColor());
 //        TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(Constants.EXTERNAL_ID);
-//        HighlightedTabTextAttributesDescription attributesDescription =
-//                new HighlightedTabTextAttributesDescription(Constants.GROUP, Constants.GROUP, attributes,
+//        TabTextAttributesDescription attributesDescription =
+//                new TabTextAttributesDescription(Constants.GROUP, Constants.GROUP, attributes,
 //                        textAttributesKey, EditorColorsManager.getInstance().getGlobalScheme());
 
         return resultingConfig;

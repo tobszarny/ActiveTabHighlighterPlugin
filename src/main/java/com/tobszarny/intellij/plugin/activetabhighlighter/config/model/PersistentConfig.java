@@ -21,20 +21,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.awt.*;
+import java.util.Optional;
 
 @Builder(builderClassName = "PersistentConfigBuilder")
 @AllArgsConstructor
 public
 class PersistentConfig {
 
-    public boolean enabled = false;
-    public boolean acrossThemes = false;
+    public boolean enabled;
+    public boolean acrossThemes;
 
-    public boolean backgroundEnabled = false;
+    public boolean backgroundEnabled ;
     public PersistentColor background;
     public PersistentColor backgroundDark;
 
-    public boolean foregroundEnabled = false;
+    public boolean foregroundEnabled;
     public PersistentColor foreground;
 
     public PersistentConfig() {
@@ -59,7 +60,8 @@ class PersistentConfig {
         if (acrossThemes)
             return background.toColor();
 
-        return UIUtil.isUnderDarcula() ? backgroundDark.toColor() : background.toColor();
+        return UIUtil.isUnderDarcula() ? Optional.ofNullable(backgroundDark).map(PersistentColor::toColor).orElse(null) :
+                Optional.ofNullable(background).map(PersistentColor::toColor).orElse(null);
     }
 
     public Color getForegroundColor() {

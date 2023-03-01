@@ -21,17 +21,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-public class HighlighterSettingsConfig {
+public class SettingsConfig {
     private final Project myProject;
 
     private PersistentConfig config = PersistentConfig.builder().enabled(false).build();
 
     @Nullable
-    public static HighlighterSettingsConfig getSettings(Project project) {
-        return project.getService(HighlighterSettingsConfig.class);
+    public static SettingsConfig getSettings(Project project) {
+        return project.getService(SettingsConfig.class);
     }
 
-    public HighlighterSettingsConfig(Project project) {
+    public SettingsConfig(Project project) {
         this.myProject = project;
     }
 

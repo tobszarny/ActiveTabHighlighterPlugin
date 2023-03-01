@@ -29,8 +29,8 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.tabs.TabInfo;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.HighlighterSettingsProjectConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsProjectConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,15 +42,15 @@ import java.util.Arrays;
  * File Editor Listener implementation for tab highlight
  * Created by Tomasz Obszarny on 19.01.2017.
  */
-public class TabHighlighterFileEditorListener implements FileEditorManagerListener, HighlighterSettingsChangeListener {
+public class TabFileEditorListener implements FileEditorManagerListener, SettingsChangeListener {
 
-    private static final Logger LOGGER = Logger.getInstance(TabHighlighterFileEditorListener.class);
-    private final HighlighterSettingsProjectConfig highlighterSettingsProjectConfig;
+    private static final Logger LOGGER = Logger.getInstance(TabFileEditorListener.class);
+    private final SettingsProjectConfig highlighterSettingsProjectConfig;
     private final Project myProject;
 
-    public TabHighlighterFileEditorListener(Project project) {
+    public TabFileEditorListener(Project project) {
         this.myProject = project;
-        highlighterSettingsProjectConfig = HighlighterSettingsProjectConfig.getSettings(project);
+        highlighterSettingsProjectConfig = SettingsProjectConfig.getSettings(project);
 
         initialize();
     }

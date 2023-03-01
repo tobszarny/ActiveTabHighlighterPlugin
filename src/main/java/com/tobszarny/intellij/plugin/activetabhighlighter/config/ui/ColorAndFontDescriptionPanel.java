@@ -29,6 +29,7 @@ public class ColorAndFontDescriptionPanel extends JPanel {
 
     //region Global Panel
     private JPanel mainPanel;
+    private JBCheckBox enable;
     private JBCheckBox backgroundCheckBox;
     private JCheckBox sameColorAllThemesCheckBox;
     private ColorPanel backgroundChooser;
@@ -95,6 +96,7 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     public void setVisible(boolean aFlag) {
         super.setVisible(aFlag);
 
+        enable.setVisible(aFlag);
         backgroundChooser.setVisible(aFlag);
         backgroundDarkChooser.setVisible(aFlag);
         lightLabel.setVisible(aFlag);
@@ -104,9 +106,25 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     }
 
     interface Listener extends EventListener {
-        void onSettingsChanged(@NotNull ActionEvent e);
 
+        void onSettingsChanged(@NotNull ActionEvent e);
         void onHyperLinkClicked(@NotNull HyperlinkEvent e);
+
+    }
+    public boolean isSameColorAllThemesCheckBoxSelected() {
+        return this.sameColorAllThemesCheckBox.isSelected();
+    }
+
+    public boolean isBackgroundCheckBoxSelected() {
+        return this.backgroundCheckBox.isSelected();
+    }
+
+    public Color getBackgroundChooserColor() {
+        return this.backgroundChooser.getSelectedColor();
+    }
+
+    public Color getBackgroundDarkChooserColor() {
+        return this.backgroundDarkChooser.getSelectedColor();
     }
 
 

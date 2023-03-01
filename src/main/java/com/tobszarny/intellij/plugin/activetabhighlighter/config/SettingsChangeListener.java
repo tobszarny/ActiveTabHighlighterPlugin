@@ -20,8 +20,8 @@ import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;
 
-public interface HighlighterSettingsChangeListener extends EventListener {
-    Topic<HighlighterSettingsChangeListener> CHANGE_HIGHLIGHTER_SETTINGS_TOPIC = Topic.create("Highlighter Topic", HighlighterSettingsChangeListener.class);
+public interface SettingsChangeListener extends EventListener {
+    Topic<SettingsChangeListener> CHANGE_HIGHLIGHTER_SETTINGS_TOPIC = Topic.create("Highlighter Topic", SettingsChangeListener.class);
 
     default void beforeSettingsChanged(SettingsChangedEvent context) {
     }

@@ -16,38 +16,37 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter.config.model;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.RoamingType;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlightedTabTextAttributesDescription;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.TabTextAttributesDescription;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-@State(name = "ActiveTabHighlighterGlobalConfiguration",
+@State(name = "ActiveTabHighlighterConfiguration",
         storages = {
-                @Storage(value = "active-tab-highlighter-global-v2.xml", roamingType = RoamingType.PER_OS)
+                @Storage(Constants.ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML)
         })
-public class HighlighterSettingsGlobalConfig implements PersistentStateComponent<PersistentConfig> {
+public class SettingsProjectConfig implements PersistentStateComponent<PersistentConfig> {
 
-    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsGlobalConfig.class);
-    public HighlightedTabTextAttributesDescription attributesDescription;
+    private static final Logger LOGGER = Logger.getInstance(SettingsProjectConfig.class);
+    public TabTextAttributesDescription attributesDescription;
     PersistentConfig persistentConfig;
 
-    public HighlighterSettingsGlobalConfig() {
+    public SettingsProjectConfig() {
         setDefaults();
     }
 
     @Nullable
-    public static HighlighterSettingsGlobalConfig getSettings() {
-        return ApplicationManager.getApplication().getService(HighlighterSettingsGlobalConfig.class);
+    public static SettingsProjectConfig getSettings(Project project) {
+        return project.getService(SettingsProjectConfig.class);
     }
 
     public void setDefaults() {
@@ -58,7 +57,7 @@ public class HighlighterSettingsGlobalConfig implements PersistentStateComponent
         TextAttributes attributes = new TextAttributes();
         attributes.setBackgroundColor(persistentConfig.background.toColor());
         TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(Constants.EXTERNAL_ID);
-        attributesDescription = new HighlightedTabTextAttributesDescription(Constants.GROUP, Constants.GROUP, attributes, textAttributesKey, EditorColorsManager.getInstance().getGlobalScheme());
+        attributesDescription = new TabTextAttributesDescription(Constants.GROUP, Constants.GROUP, attributes, textAttributesKey, EditorColorsManager.getInstance().getGlobalScheme());
     }
 
     @Nullable
@@ -85,7 +84,7 @@ public class HighlighterSettingsGlobalConfig implements PersistentStateComponent
         attributesDescription.setBackgroundChecked(state.isBackgroundColorUsed());
     }
 
-    public HighlightedTabTextAttributesDescription getAttributesDescription() {
+    public TabTextAttributesDescription getAttributesDescription() {
         return attributesDescription;
     }
 

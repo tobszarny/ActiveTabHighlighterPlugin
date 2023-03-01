@@ -17,7 +17,6 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.DumbAware;
@@ -25,8 +24,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsChangeListener;
-import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabHighlighterFileEditorListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabFileEditorListener;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,9 +42,9 @@ public class ActiveTabHighlighterStartupActivity implements StartupActivity, Dum
         logger.debug("Initializing component");
         MessageBus bus = ApplicationManager.getApplication().getMessageBus();
         connection = bus.connect();
-        TabHighlighterFileEditorListener tabHighlighterFileEditorListener = new TabHighlighterFileEditorListener(project);
+        TabFileEditorListener tabHighlighterFileEditorListener = new TabFileEditorListener(project);
         connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, tabHighlighterFileEditorListener);
-        connection.subscribe(HighlighterSettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC, tabHighlighterFileEditorListener);
+        connection.subscribe(SettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC, tabHighlighterFileEditorListener);
     }
 
     @Override

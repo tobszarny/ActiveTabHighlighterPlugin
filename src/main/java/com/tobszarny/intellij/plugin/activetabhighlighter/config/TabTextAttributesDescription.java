@@ -21,13 +21,13 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 
-public class HighlightedTabTextAttributesDescription extends TextAttributesDescription {
+public class TabTextAttributesDescription extends TextAttributesDescription {
 
-    public HighlightedTabTextAttributesDescription(final String name,
-                                                   final String group,
-                                                   final TextAttributes attributes,
-                                                   final TextAttributesKey type,
-                                                   final EditorColorsScheme editorColorsScheme) {
+    public TabTextAttributesDescription(final String name,
+                                        final String group,
+                                        final TextAttributes attributes,
+                                        final TextAttributesKey type,
+                                        final EditorColorsScheme editorColorsScheme) {
         super(name, group, attributes, type, editorColorsScheme, null, null);
     }
 
