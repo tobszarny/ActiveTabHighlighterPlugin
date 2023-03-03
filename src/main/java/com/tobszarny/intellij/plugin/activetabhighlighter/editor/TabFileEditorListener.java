@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsProjectConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -45,12 +46,13 @@ import java.util.Arrays;
 public class TabFileEditorListener implements FileEditorManagerListener, SettingsChangeListener {
 
     private static final Logger LOGGER = Logger.getInstance(TabFileEditorListener.class);
-    private final SettingsProjectConfig highlighterSettingsProjectConfig;
     private final Project myProject;
+    private final SettingsConfig settingsConfig;
 
     public TabFileEditorListener(Project project) {
         this.myProject = project;
-        highlighterSettingsProjectConfig = SettingsProjectConfig.getSettings(project);
+
+        this.settingsConfig = SettingsConfig.getSettings(project);
 
         initialize();
     }
@@ -106,7 +108,7 @@ public class TabFileEditorListener implements FileEditorManagerListener, Setting
 
 
     private void highlight(VirtualFile file, EditorWindow editorWindow) {
-        setTabColor(highlighterSettingsProjectConfig.getBackgroundColor(), file, editorWindow);
+        setTabColor(settingsConfig.getBackgroundColor(), file, editorWindow);
     }
 
     private void unhighlight(@NotNull FileColorManager fileColorManager, VirtualFile file, EditorWindow editorWindow) {
@@ -137,7 +139,7 @@ public class TabFileEditorListener implements FileEditorManagerListener, Setting
                 if (manager.getWindows() != null) {
                     for (EditorWindow editorWindow : manager.getWindows()) {
                         TabInfo selected = editorWindow.getTabbedPane().getTabs().getSelectedInfo();
-                        selected.setTabColor(highlighterSettingsProjectConfig.getBackgroundColor());
+                        selected.setTabColor(settingsConfig.getBackgroundColor());
                     }
                 }
 

@@ -1,22 +1,21 @@
 package com.tobszarny.intellij.plugin.activetabhighlighter.config.ui;
 
 import com.intellij.openapi.application.ApplicationBundle;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.ui.ColorPanel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.JBUI;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentConfig;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Collections;
-import java.util.EventListener;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tomasz Obszarny
@@ -55,12 +54,6 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     public ColorAndFontDescriptionPanel() {
         super(new BorderLayout());
 
-//        JBEmptyBorder titleBorder = JBUI.Borders.empty(0, 0, 4, 0);
-//        globalLabel.setBorder(titleBorder);
-
-
-//        add(globalLabel, BorderLayout.CENTER);
-
         setBorder(JBUI.Borders.empty(4, 0, 4, 4));
         //noinspection unchecked
         initProjectPanelComponentsBehavior();
@@ -86,6 +79,7 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     }
 
     private void updateUi() {
+        LOGGER.info("Updating UI");
         backgroundChooser.setVisible(this.isVisible() && backgroundCheckBox.isSelected());
         backgroundDarkChooser.setVisible(this.isVisible() && backgroundCheckBox.isSelected() && !sameColorAllThemesCheckBox.isSelected());
         lightLabel.setVisible(this.isVisible() && backgroundCheckBox.isSelected() && !sameColorAllThemesCheckBox.isSelected());
@@ -105,12 +99,61 @@ public class ColorAndFontDescriptionPanel extends JPanel {
         backgroundCheckBox.setVisible(aFlag);
     }
 
+    public boolean isModified(PersistentStateComponent<PersistentConfig> globalConfig) {
+        PersistentConfig state = globalConfig.getState();
+
+        if (state == null) {
+            return false;
+        }
+
+        boolean modified = !Objects.equals(state.isEnabled(), enable.isSelected());
+
+        if (enable.isSelected()) {
+            modified = modified || checkChanges(state);
+        }
+
+        return modified;
+    }
+
+    private boolean checkChanges(PersistentConfig state) {
+        boolean modified = !Objects.equals(state.isAcrossThemes(), sameColorAllThemesCheckBox.isSelected());
+        modified = modified || !Objects.equals(state.isBackgroundEnabled(), backgroundCheckBox.isSelected());
+        if (backgroundCheckBox.isSelected()) {
+            modified = modified || checkBackgrounds(state);
+        }
+        return modified;
+    }
+
+    private boolean checkBackgrounds(PersistentConfig state) {
+        boolean modified = !Objects.equals(state.getBackgroundColor(), backgroundChooser.getSelectedColor());
+        if (!sameColorAllThemesCheckBox.isSelected()) {
+            modified = modified || !Objects.equals(state.getBackgroundDarkColor(), backgroundDarkChooser.getSelectedColor());
+        }
+        return modified;
+    }
+
+    public void primePanel(PersistentConfig persistentConfig) {
+        if (persistentConfig == null) {
+            return;
+        }
+
+        enable.setSelected(persistentConfig.isEnabled());
+        backgroundCheckBox.setSelected(persistentConfig.isBackgroundEnabled());
+        sameColorAllThemesCheckBox.setSelected(persistentConfig.isAcrossThemes());
+        backgroundChooser.setSelectedColor(persistentConfig.getBackgroundColor());
+        backgroundDarkChooser.setSelectedColor(persistentConfig.getBackgroundDarkColor());
+
+        updateUi();
+    }
+
     interface Listener extends EventListener {
 
         void onSettingsChanged(@NotNull ActionEvent e);
+
         void onHyperLinkClicked(@NotNull HyperlinkEvent e);
 
     }
+
     public boolean isSameColorAllThemesCheckBoxSelected() {
         return this.sameColorAllThemesCheckBox.isSelected();
     }

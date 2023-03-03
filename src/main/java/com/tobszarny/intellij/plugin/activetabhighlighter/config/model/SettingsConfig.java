@@ -20,11 +20,12 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.Optional;
 
 public class SettingsConfig {
     private final Project myProject;
-
-    private PersistentConfig config = PersistentConfig.builder().enabled(false).build();
+    private final SettingsGlobalConfig globalConfig;
+    private final SettingsProjectConfig projectConfig;
 
     @Nullable
     public static SettingsConfig getSettings(Project project) {
@@ -33,17 +34,33 @@ public class SettingsConfig {
 
     public SettingsConfig(Project project) {
         this.myProject = project;
-    }
-
-    public void storeConfiguration(PersistentConfig config){
-        this.config = config;
+        this.globalConfig = SettingsGlobalConfig.getSettings();
+        this.projectConfig = Optional.ofNullable(project)
+                .map(SettingsProjectConfig::getSettings)
+                .orElse(null);
     }
 
     public boolean isEnabled() {
-        return config.enabled;
+        return Optional.ofNullable(this.globalConfig)
+                .map(SettingsGlobalConfig::getState)
+                .map(PersistentConfig::isEnabled)
+                .orElse(Optional.ofNullable(this.projectConfig)
+                        .map(SettingsProjectConfig::getState)
+                        .map(PersistentConfig::isEnabled)
+                        .orElse(false));
     }
 
     public Color getBackgroundColor() {
-        return config.getInferredBackgroundColor();
+        Color color = Optional.ofNullable(this.projectConfig)
+                .map(SettingsProjectConfig::getState)
+                .filter(PersistentConfig::isEnabled)
+                .filter(PersistentConfig::isBackgroundEnabled)
+                .map(PersistentConfig::getInferredBackgroundColor)
+                .orElse(Optional.ofNullable(this.globalConfig)
+                        .map(SettingsGlobalConfig::getState)
+                        .filter(PersistentConfig::isEnabled)
+                        .map(PersistentConfig::getInferredBackgroundColor)
+                        .get());
+        return color;
     }
 }

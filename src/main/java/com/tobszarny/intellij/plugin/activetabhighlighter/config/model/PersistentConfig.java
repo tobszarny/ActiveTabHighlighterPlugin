@@ -44,6 +44,14 @@ class PersistentConfig {
         foreground = new PersistentColor();
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isAcrossThemes() {
+        return acrossThemes;
+    }
+
     public Color getBackgroundDarkColor() {
         return backgroundDark.toColor();
     }
@@ -95,10 +103,6 @@ class PersistentConfig {
                 "background=" + background +
                 ", foreground=" + foreground +
                 '}';
-    }
-
-    public boolean isBackgroundColorUsed() {
-        return backgroundEnabled;
     }
 
     public void storeConfig(PersistentConfig config) {

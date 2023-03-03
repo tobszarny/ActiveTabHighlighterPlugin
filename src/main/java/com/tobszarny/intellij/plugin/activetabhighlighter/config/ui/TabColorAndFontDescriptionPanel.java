@@ -186,7 +186,17 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
 
     public boolean anyModified(SettingsGlobalConfig globalConfig, SettingsProjectConfig projectConfig) {
         //TODO: implement me
+        globalColorAndFontDescriptionPanel.isModified(globalConfig);
+        projectColorAndFontDescriptionPanel.isModified(projectConfig);
         return false;
+    }
+
+    public void primeGlobalPanel(PersistentConfig persistentConfig) {
+        globalColorAndFontDescriptionPanel.primePanel(persistentConfig);
+    }
+
+    public void primeProjectPanel(PersistentConfig persistentConfig) {
+        projectColorAndFontDescriptionPanel.primePanel(persistentConfig);
     }
 
 

@@ -81,7 +81,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
 //        LOGGER.info("*****updateAttributes(" + state + ")");
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
         attributesDescription.setBackgroundColor(state.getInferredBackgroundColor());
-        attributesDescription.setBackgroundChecked(state.isBackgroundColorUsed());
+        attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
     }
 
     public TabTextAttributesDescription getAttributesDescription() {

@@ -97,8 +97,8 @@ public class SettingsConfigurable implements SearchableConfigurable {
 
     private void primeComponent() {
         // TODO: this may be obsolete when todo below are done, as reset will prime the component
-//        tabColorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.persistentConfig);
-//        tabColorAndFontDescriptionPanel.primeProjectPanel(projectConfig.persistentConfig);
+        tabColorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.persistentConfig);
+        tabColorAndFontDescriptionPanel.primeProjectPanel(projectConfig.persistentConfig);
     }
 
     @Override
@@ -126,8 +126,6 @@ public class SettingsConfigurable implements SearchableConfigurable {
                 globalConfig.persistentConfig, projectConfig.persistentConfig);
 
 //        colorAndFontDescriptionPanel.apply(colorAndFontDescriptionPanel.generateGlobalConfig()., editorColorsScheme);
-        SettingsConfig.getSettings(myProject).storeConfiguration(attributesDescription);
-
 
         bus.syncPublisher(SettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).settingsChanged(new SettingsChangedEvent(this));
     }
