@@ -1,3 +1,20 @@
+/*
+ *
+ *  Copyright (c) 2023 Tomasz Obszarny
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.tobszarny.intellij.plugin.activetabhighlighter.config.ui;
 
 import com.intellij.openapi.application.ApplicationBundle;
@@ -11,7 +28,6 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.JBUI;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentColor;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsGlobalConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsProjectConfig;
@@ -53,8 +69,8 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
     private ColorAndFontDescriptionPanel projectColorAndFontDescriptionPanel;
     //endregion
 
-    private Map<String, EffectType> myEffectsMap;
-    private boolean myUiEventsEnabled = true;
+    private final Map<String, EffectType> myEffectsMap;
+    private final boolean myUiEventsEnabled = true;
 
     {
         Map<String, EffectType> map = new LinkedHashMap();
@@ -161,12 +177,8 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
                 .enabled(enableJBCheckBox.isSelected())
                 .acrossThemes(globalColorAndFontDescriptionPanel.isSameColorAllThemesCheckBoxSelected())
                 .backgroundEnabled(globalColorAndFontDescriptionPanel.isBackgroundCheckBoxSelected())
-                .background(PersistentColor.builder()
-                        .fromColor(globalColorAndFontDescriptionPanel.getBackgroundChooserColor())
-                        .build())
-                .backgroundDark(PersistentColor.builder()
-                        .fromColor(globalColorAndFontDescriptionPanel.getBackgroundDarkChooserColor())
-                        .build())
+                .backgroundFromColor(globalColorAndFontDescriptionPanel.getBackgroundChooserColor())
+                .backgroundDarkFromColor(globalColorAndFontDescriptionPanel.getBackgroundDarkChooserColor())
                 .build();
     }
 
@@ -175,20 +187,13 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
                 .enabled(projectOverrideJBCheckBox.isSelected())
                 .acrossThemes(projectColorAndFontDescriptionPanel.isSameColorAllThemesCheckBoxSelected())
                 .backgroundEnabled(projectColorAndFontDescriptionPanel.isBackgroundCheckBoxSelected())
-                .background(PersistentColor.builder()
-                        .fromColor(projectColorAndFontDescriptionPanel.getBackgroundChooserColor())
-                        .build())
-                .backgroundDark(PersistentColor.builder()
-                        .fromColor(projectColorAndFontDescriptionPanel.getBackgroundDarkChooserColor())
-                        .build())
+                .backgroundFromColor(projectColorAndFontDescriptionPanel.getBackgroundChooserColor())
+                .backgroundDarkFromColor(projectColorAndFontDescriptionPanel.getBackgroundDarkChooserColor())
                 .build();
     }
 
     public boolean anyModified(SettingsGlobalConfig globalConfig, SettingsProjectConfig projectConfig) {
-        //TODO: implement me
-        globalColorAndFontDescriptionPanel.isModified(globalConfig);
-        projectColorAndFontDescriptionPanel.isModified(projectConfig);
-        return false;
+        return globalColorAndFontDescriptionPanel.isModified(globalConfig) || projectColorAndFontDescriptionPanel.isModified(projectConfig);
     }
 
     public void primeGlobalPanel(PersistentConfig persistentConfig) {

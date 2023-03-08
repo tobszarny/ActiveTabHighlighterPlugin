@@ -1,3 +1,20 @@
+/*
+ *
+ *  Copyright (c) 2023 Tomasz Obszarny
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.bak;
 
 import com.intellij.application.options.colors.ColorAndFontDescription;
@@ -19,7 +36,6 @@ import com.intellij.util.FontUtil;
 import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentColor;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +84,7 @@ public class AATabColorAndFontDescriptionPanel extends JPanel {
     private JLabel darkProjectLabel;
     //endregion
 
-    private Map<String, EffectType> myEffectsMap;
+    private final Map<String, EffectType> myEffectsMap;
     private boolean myUiEventsEnabled = true;
 
     {
@@ -426,12 +442,8 @@ public class AATabColorAndFontDescriptionPanel extends JPanel {
                 .enabled(enableJBCheckBox.isSelected())
                 .acrossThemes(sameColorAllThemesCheckBox.isSelected())
                 .backgroundEnabled(backgroundCheckBox.isSelected())
-                .background(PersistentColor.builder()
-                        .fromColor(backgroundChooser.getSelectedColor())
-                        .build())
-                .backgroundDark(PersistentColor.builder()
-                        .fromColor(backgroundDarkChooser.getSelectedColor())
-                        .build())
+                .backgroundFromColor(backgroundChooser.getSelectedColor())
+                .backgroundDarkFromColor(backgroundDarkChooser.getSelectedColor())
                 .build();
     }
 
@@ -440,12 +452,8 @@ public class AATabColorAndFontDescriptionPanel extends JPanel {
                 .enabled(projectOverrideJBCheckBox.isSelected())
                 .acrossThemes(sameColorAllThemesProjectCheckBox.isSelected())
                 .backgroundEnabled(backgroundProjectCheckBox.isSelected())
-                .background(PersistentColor.builder()
-                        .fromColor(backgroundProjectChooser.getSelectedColor())
-                        .build())
-                .backgroundDark(PersistentColor.builder()
-                        .fromColor(backgroundDarkProjectChooser.getSelectedColor())
-                        .build())
+                .backgroundFromColor(backgroundProjectChooser.getSelectedColor())
+                .backgroundDarkFromColor(backgroundDarkProjectChooser.getSelectedColor())
                 .build();
     }
 

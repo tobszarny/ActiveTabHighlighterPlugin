@@ -15,16 +15,25 @@
  *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config.model;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
-public final class Constants {
-    public static final String GROUP = "Highlighter";
-    public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
-    public static final String ACTIVE_TAB_HIGHLIGHTER_CONFIG_OS_XML = "active-tab-highlighter-global-v2.xml";
-    public static final String ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML = "active-tab-highlighter-v2.xml";
+import org.apache.commons.lang3.StringUtils;
 
-    private Constants() {
+import java.awt.Color;
+import java.util.Optional;
+
+public final class ColorUtils {
+    private ColorUtils() {
     }
 
+    public static Color decodeColor(String color) {
+        return StringUtils.isEmpty(color) ? null :
+                Color.decode(color.replace("#", "0x"));
+    }
 
+    public static String encodeColor(Color color) {
+        return Optional.ofNullable(color)
+                .map(c -> String.format("#%06X", color.getRGB() & 0xFFFFFF))
+                .orElse("");
+    }
 }
