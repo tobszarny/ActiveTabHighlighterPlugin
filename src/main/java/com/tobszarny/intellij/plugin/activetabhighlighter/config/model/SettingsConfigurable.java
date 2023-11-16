@@ -49,10 +49,11 @@ public class SettingsConfigurable implements SearchableConfigurable {
     private TabColorAndFontDescriptionPanel tabColorAndFontDescriptionPanel;
 
     public SettingsConfigurable(Project project) {
-        this.myProject = project;
-        this.globalConfig = SettingsGlobalConfig.getSettings();
-        this.projectConfig = SettingsProjectConfig.getSettings(project);
-        this.editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+        LOGGER.warn("***** SettingsConfigurable() ");
+        myProject = project;
+        globalConfig = SettingsGlobalConfig.getSettings();
+        projectConfig = SettingsProjectConfig.getSettings(project);
+        editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
         bus = ApplicationManager.getApplication().getMessageBus();
     }
 
@@ -85,7 +86,7 @@ public class SettingsConfigurable implements SearchableConfigurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        LOGGER.info("***** createComponent() ");
+        LOGGER.warn("***** createComponent() ");
 //        TextAttributes attributes = new TextAttributes();
 //        attributes.setBackgroundColor(config.getBackgroundColor());
 //        attributes.setFontType(Font.PLAIN);
@@ -104,7 +105,7 @@ public class SettingsConfigurable implements SearchableConfigurable {
 
     @Override
     public boolean isModified() {
-        LOGGER.info("***** isModified() ");
+        LOGGER.warn("***** isModified() ");
         TabTextAttributesDescription attributesDescription = projectConfig.getAttributesDescription();
 
 //        colorAndFontDescriptionPanel.is
@@ -157,7 +158,7 @@ public class SettingsConfigurable implements SearchableConfigurable {
 
 //    @Override
 //    public void disposeUIResources() {
-//        LOGGER.info("***** disposeUIResources() ");
+//        LOGGER.warn("***** disposeUIResources() ");
 //        colorAndFontDescriptionPanel = null;
 //    }
 

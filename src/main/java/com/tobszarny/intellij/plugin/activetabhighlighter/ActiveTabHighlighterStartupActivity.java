@@ -17,6 +17,7 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter;
 
+import com.intellij.ide.AppLifecycleListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -25,34 +26,79 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.AutoconfigureListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabFileEditorListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabsListener;
+import com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabsListenerImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Main application ActiveTabHighlighter service
  * Created by Tomasz Obszarny on 19.01.2017.
  */
-public class ActiveTabHighlighterStartupActivity implements StartupActivity, DumbAware {
+public class ActiveTabHighlighterStartupActivity implements StartupActivity, DumbAware, AppLifecycleListener {
 
-    private static final Logger logger = Logger.getInstance(ActiveTabHighlighterStartupActivity.class);
+    private static final Logger LOGGER = Logger.getInstance(ActiveTabHighlighterStartupActivity.class);
+
+    private Project myProject;
 
     private MessageBusConnection connection;
 
-    public void init(Project project) {
-        logger.debug("Initializing component");
+    @Override
+    public void runActivity(@NotNull Project project) {
+        this.myProject = project;
+        init(project);
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            // don't create the UI when unit testing
+        } else {
+
+        }
+    }
+
+    @Override
+    public void appStarted() {
+        LOGGER.warn("DADA");
+
+//        ApplicationManager.getApplication().invokeLater(() -> {
+//            LOGGER.warn("appStarted()->invokeLater()");
+//            FileEditorManager fileEditorManager = FileEditorManager.getInstance(myProject);
+//            FileEditor selectedEditor = fileEditorManager.getSelectedEditor();
+//            if (selectedEditor != null) {
+//                VirtualFile file = selectedEditor.getFile();
+//                selectedEditor.
+//                handleSelectionChange(null, file);
+//            } else {
+//                LOGGER.warn("No editor");
+//            }
+//        },  myProject.getDisposed());
+    }
+
+    private void init(Project project) {
+        LOGGER.warn("Initializing component");
         MessageBus bus = ApplicationManager.getApplication().getMessageBus();
         connection = bus.connect();
         TabFileEditorListener tabHighlighterFileEditorListener = new TabFileEditorListener(project);
         connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, tabHighlighterFileEditorListener);
         connection.subscribe(SettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC, tabHighlighterFileEditorListener);
+        connection.subscribe(AutoconfigureListener.AUTOCONFIGURE_TOPIC, tabHighlighterFileEditorListener);
+
+        TabsListenerImpl tabsListener = new TabsListenerImpl(project);
+        connection.subscribe(TabsListener.TABS_TOPIC, tabsListener);
+
+        connection.subscribe(AppLifecycleListener.TOPIC, this);
+//        connection.subscribe(ApplicationActivationListener.TOPIC, new ApplicationActivationListener() {
+//            @Override
+//            public void applicationActivated(@NotNull IdeFrame ideFrame) {
+//               LOGGER.warn("Activatexcdasdfasdfasdf");
+//            }
+//        });
+
+//        bus.syncPublisher(AutoconfigureListener.AUTOCONFIGURE_TOPIC).fireAutoconfigure();
+//
+//        MessageBusConnection connectionProject = project.getMessageBus().connect();
+//        AppLifecycleListener
+//        connectionProject.subscribe(DumbService.DUMB_MODE, tabHighlighterFileEditorListener);
     }
 
-    @Override
-    public void runActivity(@NotNull Project project) {
-        init(project);
-        if(ApplicationManager.getApplication().isUnitTestMode()) {
-            // don't create the UI when unit testing
-        }
-    }
 }

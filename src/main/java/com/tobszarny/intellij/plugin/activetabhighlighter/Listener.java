@@ -15,16 +15,20 @@
  *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config;
+package com.tobszarny.intellij.plugin.activetabhighlighter;
 
-import com.intellij.util.messages.Topic;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.EventListener;
+import java.util.List;
 
-public interface SettingsChangeListener extends EventListener {
-    Topic<SettingsChangeListener> CHANGE_HIGHLIGHTER_SETTINGS_TOPIC = Topic.create("Highlighter Topic", SettingsChangeListener.class);
-
-    void beforeSettingsChanged(SettingsChangedEvent context);
-
-    void settingsChanged(SettingsChangedEvent context);
+public class Listener implements com.intellij.openapi.vfs.AsyncFileListener{
+    private static final Logger LOGGER = Logger.getInstance(Listener.class);
+    @Override
+    public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
+        LOGGER.warn("prepareChange()");
+        return null;
+    }
 }

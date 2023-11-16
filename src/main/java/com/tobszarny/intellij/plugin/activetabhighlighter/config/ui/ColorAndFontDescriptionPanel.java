@@ -96,7 +96,7 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     }
 
     private void updateUi() {
-        LOGGER.info("Updating UI");
+        LOGGER.warn("Updating UI");
         backgroundChooser.setVisible(this.isVisible() && backgroundCheckBox.isSelected());
         backgroundDarkChooser.setVisible(this.isVisible() && backgroundCheckBox.isSelected() && !sameColorAllThemesCheckBox.isSelected());
         lightLabel.setVisible(this.isVisible() && backgroundCheckBox.isSelected() && !sameColorAllThemesCheckBox.isSelected());

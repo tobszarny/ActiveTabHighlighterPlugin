@@ -52,7 +52,7 @@ public class SettingsConfig {
     }
 
     public Color getBackgroundColor() {
-        final Color color = Optional.ofNullable(this.projectConfig)
+        return Optional.ofNullable(this.projectConfig)
                 .map(SettingsProjectConfig::getState)
                 .filter(PersistentConfig::isEnabled)
                 .filter(PersistentConfig::isBackgroundEnabled)
@@ -62,6 +62,5 @@ public class SettingsConfig {
                         .filter(PersistentConfig::isEnabled)
                         .map(PersistentConfig::getInferredBackgroundColor)
                         .orElse(null));
-        return color;
     }
 }

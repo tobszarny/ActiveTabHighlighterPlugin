@@ -15,16 +15,14 @@
  *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config;
+package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
 
 import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;
 
-public interface SettingsChangeListener extends EventListener {
-    Topic<SettingsChangeListener> CHANGE_HIGHLIGHTER_SETTINGS_TOPIC = Topic.create("Highlighter Topic", SettingsChangeListener.class);
+public interface TabsListener extends EventListener {
+    Topic<TabsListener> TABS_TOPIC = Topic.create("Highlighter Tabs Topic", TabsListener.class);
 
-    void beforeSettingsChanged(SettingsChangedEvent context);
-
-    void settingsChanged(SettingsChangedEvent context);
+    void onTab(TabEvent event);
 }

@@ -1,8 +1,5 @@
 # ActiveTabHighlighterPlugin
 
-What it is not:
-- best implementation you ever saw
-
 What is it:
 - minimum implementation plugin
 - gets the job of distinct highlight of active tab done (I'm personally using Darcula theme, and this has been 

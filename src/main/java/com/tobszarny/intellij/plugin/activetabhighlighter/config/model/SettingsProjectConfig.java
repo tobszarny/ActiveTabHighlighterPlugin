@@ -51,7 +51,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
     }
 
     public void setDefaults() {
-//        LOGGER.info("*****setDefaults() ");
+        LOGGER.warn("***** setDefaults() ");
         persistentConfig = new PersistentConfig();
         persistentConfig.enabled = true;
         persistentConfig.background = "#AD2E9C";
@@ -69,7 +69,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
 
     @Override
     public void loadState(PersistentConfig persistentState) {
-//        LOGGER.info("*****LOADING " + persistentState);
+        LOGGER.warn("***** loadState " + persistentState);
         XmlSerializerUtil.copyBean(persistentState, this.persistentConfig);
         updateAttributes(persistentState);
     }
@@ -79,7 +79,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
     }
 
     private void updateAttributes(PersistentConfig state) {
-//        LOGGER.info("*****updateAttributes(" + state + ")");
+        LOGGER.warn("***** updateAttributes(" + state + ")");
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
         attributesDescription.setBackgroundColor(state.getInferredBackgroundColor());
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
@@ -90,6 +90,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
     }
 
     public void storeConfig(PersistentConfig config) {
+        LOGGER.warn("***** storeConfig(" + config + ")");
         this.persistentConfig.storeConfig(config);
 
         updateAttributes(config);

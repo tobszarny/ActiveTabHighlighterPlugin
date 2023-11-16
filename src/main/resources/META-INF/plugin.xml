@@ -40,8 +40,11 @@
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Startup -->
+         Startup
         <postStartupActivity implementation="com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterStartupActivity"/>
+
+        <vfs.asyncListener implementation="com.tobszarny.intellij.plugin.activetabhighlighter.Listener" />
+
 
         <editorTabColorProvider
                 implementation="com.tobszarny.intellij.plugin.activetabhighlighter.editor.CustomEditorTabColorProvider"/>
@@ -57,7 +60,12 @@
         <applicationService
                 serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsGlobalConfig"/>
         <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsConfig"/>
+
     </extensions>
+
+<!--    <applicationListeners>-->
+<!--        <listener class="com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterStartupActivity" topic="com.intellij.ide.AppLifecycleListener"/>-->
+<!--    </applicationListeners>-->
 
     <actions>
     </actions>

@@ -21,10 +21,8 @@ import com.intellij.util.messages.Topic;
 
 import java.util.EventListener;
 
-public interface SettingsChangeListener extends EventListener {
-    Topic<SettingsChangeListener> CHANGE_HIGHLIGHTER_SETTINGS_TOPIC = Topic.create("Highlighter Topic", SettingsChangeListener.class);
+public interface AutoconfigureListener extends EventListener {
+    Topic<AutoconfigureListener> AUTOCONFIGURE_TOPIC = Topic.create("Autoconfigure Topic", AutoconfigureListener.class);
 
-    void beforeSettingsChanged(SettingsChangedEvent context);
-
-    void settingsChanged(SettingsChangedEvent context);
+    void fireAutoconfigure();
 }

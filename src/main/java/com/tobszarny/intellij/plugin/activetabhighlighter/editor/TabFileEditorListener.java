@@ -17,33 +17,36 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
 
+import com.intellij.ide.AppLifecycleListener;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileEditor.ex.FileEditorWithProvider;
+import com.intellij.openapi.fileEditor.impl.EditorComposite;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
-import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.tabs.TabInfo;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.AutoconfigureListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsConfig;
+import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * File Editor Listener implementation for tab highlight
  * Created by Tomasz Obszarny on 19.01.2017.
  */
-public class TabFileEditorListener implements FileEditorManagerListener, SettingsChangeListener {
+public class TabFileEditorListener implements FileEditorManagerListener, SettingsChangeListener, AutoconfigureListener, AppLifecycleListener {
 
     private static final Logger LOGGER = Logger.getInstance(TabFileEditorListener.class);
     private final Project myProject;
@@ -58,30 +61,48 @@ public class TabFileEditorListener implements FileEditorManagerListener, Setting
     }
 
     private void initialize() {
+        LOGGER.warn("initialize()");
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(myProject);
         FileEditor selectedEditor = fileEditorManager.getSelectedEditor();
-        if (selectedEditor != null) {
-            VirtualFile file = selectedEditor.getFile();
-
-            SwingUtilities.invokeLater(() -> handleSelectionChange(null, file));
-        }
     }
 
     @Override
     public void fileOpened(@NotNull FileEditorManager fileEditorManager, @NotNull VirtualFile virtualFile) {
-        LOGGER.info(String.format("fileOpen %s", virtualFile.getUrl()));
+        LOGGER.warn(String.format("fileOpened(): fileOpen %s", virtualFile.getUrl()));
     }
 
     @Override
     public void fileClosed(@NotNull FileEditorManager fileEditorManager, @NotNull VirtualFile virtualFile) {
+        LOGGER.warn("fileClosed()");
     }
 
     @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent fileEditorManagerEvent) {
+        LOGGER.warn("selectionChanged()");
         if (fileEditorManagerEvent.getManager().getProject().equals(myProject)) {
             handleSelectionChange(fileEditorManagerEvent.getOldFile(), fileEditorManagerEvent.getNewFile());
         }
     }
+
+    @Override
+    public void fileOpenedSync(@NotNull FileEditorManager source, @NotNull VirtualFile file, @NotNull List<FileEditorWithProvider> editorsWithProviders) {
+        LOGGER.warn("fileOpenedSync()");
+    }
+
+    //    @Override
+//    public  void exitDumbMode() {
+//        ApplicationManager.getApplication().invokeLater(() -> {
+//            LOGGER.warn("exitDumbMode()->invokeLater()");
+//            FileEditorManager fileEditorManager = FileEditorManager.getInstance(myProject);
+//            FileEditor selectedEditor = fileEditorManager.getSelectedEditor();
+//            if (selectedEditor != null) {
+//                VirtualFile file = selectedEditor.getFile();
+//                handleSelectionChange(null, file);
+//            } else {
+//                LOGGER.warn("No editor");
+//            }
+//        },  myProject.getDisposed());
+//    }
 
     private void handleSelectionChange(VirtualFile oldFile, VirtualFile newFile) {
         final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(myProject);
@@ -95,13 +116,13 @@ public class TabFileEditorListener implements FileEditorManagerListener, Setting
     }
 
     private void highlightSafe(VirtualFile file, EditorWindow editorWindow) {
-        if (file != null && editorWindow.findFileComposite(file) != null) {
+        if (file != null && editorWindow.getComposite(file) != null) {
             highlight(file, editorWindow);
         }
     }
 
     private void unhighlightSafe(FileColorManager fileColorManager, VirtualFile oldFile, EditorWindow editorWindow) {
-        if (oldFile != null && editorWindow.findFileComposite(oldFile) != null) {
+        if (oldFile != null && editorWindow.getComposite(oldFile) != null) {
             unhighlight(fileColorManager, oldFile, editorWindow);
         }
     }
@@ -116,9 +137,9 @@ public class TabFileEditorListener implements FileEditorManagerListener, Setting
     }
 
     private void setTabColor(Color color, @NotNull VirtualFile file, @NotNull EditorWindow editorWindow) {
-        final EditorWithProviderComposite fileComposite = editorWindow.findFileComposite(file);
+        final EditorComposite fileComposite = editorWindow.getComposite(file);
 
-        final int index = getEditorIndex(editorWindow, fileComposite);
+        final int index = getFileWithinEditorIndex(editorWindow, fileComposite);
         if (index >= 0) {
             if (editorWindow.getTabbedPane() != null) { //Distraction free mode // Presentation mode
                 editorWindow.getTabbedPane().getTabs().getTabAt(index).setTabColor(color);
@@ -126,25 +147,47 @@ public class TabFileEditorListener implements FileEditorManagerListener, Setting
         }
     }
 
-    private int getEditorIndex(@NotNull EditorWindow editorWindow, EditorWithProviderComposite fileComposite) {
-        return Arrays.asList(editorWindow.getEditors()).indexOf(fileComposite);
+    private int getFileWithinEditorIndex(@NotNull EditorWindow editorWindow, EditorComposite fileComposite) {
+        Validate.notNull(editorWindow, "EditorWindow cannot be null");
+        return editorWindow.getAllComposites().indexOf(fileComposite);
+    }
+
+    @Override
+    public void beforeSettingsChanged(SettingsChangedEvent context) {
+        LOGGER.warn("beforeSettingsChanged()");
     }
 
     @Override
     public void settingsChanged(SettingsChangedEvent context) {
-        if (ProjectManager.getInstance().getOpenProjects() != null) {
-            for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-                final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
+        LOGGER.warn("settingsChanged()");
+        ProjectManager.getInstance().getOpenProjects();
+        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+            final FileEditorManagerEx manager = FileEditorManagerEx.getInstanceEx(project);
 
-                if (manager.getWindows() != null) {
-                    for (EditorWindow editorWindow : manager.getWindows()) {
-                        TabInfo selected = editorWindow.getTabbedPane().getTabs().getSelectedInfo();
-                        selected.setTabColor(settingsConfig.getBackgroundColor());
-                    }
-                }
-
+            for (EditorWindow editorWindow : manager.getWindows()) {
+                TabInfo selected = editorWindow.getTabbedPane().getTabs().getSelectedInfo();
+                selected.setTabColor(settingsConfig.getBackgroundColor());
             }
+
         }
 
+    }
+
+    @Override
+    public void fireAutoconfigure() {
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//
+//        }
+//        ApplicationManager.getApplication().invokeLaterOnWriteThread(() -> {
+//            LOGGER.warn("initialize()->invokeLater()");
+//            FileEditorManager fileEditorManager = FileEditorManager.getInstance(myProject);
+//            FileEditor selectedEditor = fileEditorManager.getSelectedEditor();
+//            if (selectedEditor != null) {
+//                VirtualFile file = selectedEditor.getFile();
+//                handleSelectionChange(null, file);
+//            }
+//        });
     }
 }
