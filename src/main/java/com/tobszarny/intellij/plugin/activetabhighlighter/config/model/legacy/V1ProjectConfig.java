@@ -1,23 +1,23 @@
 /*
- * Copyright (c) 2021 Tomasz Obszarny
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Copyright (c) 2023 Tomasz Obszarny
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config.model.legacy;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ComponentManager;
+
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -27,40 +27,36 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.Constants;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 @State(name = "ActiveTabHighlighterConfiguration",
         storages = {
-                @Storage("active-tab-highlighter.xml")
+                @Storage(Constants.ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML)
         })
-public class HighlighterSettingsConfig implements PersistentStateComponent<HighlighterSettingsConfig.PersistentState> {
+public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig.PersistentState> {
 
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
-    private static final Logger LOGGER = Logger.getInstance(HighlighterSettingsConfig.class);
+    private static final Logger LOGGER = Logger.getInstance(V1ProjectConfig.class);
     public HighlightedTabTextAttributesDescription attributesDescription;
-    PersistentState persistentState;
+    V1ProjectConfig.PersistentState persistentState;
     private Color backgroundColor;
 
-    public HighlighterSettingsConfig() {
+    public V1ProjectConfig() {
         setDefaults();
     }
 
     @Nullable
-    public static HighlighterSettingsConfig getSettings(Project project) {
-        return project.getService(HighlighterSettingsConfig.class);
+    public static V1ProjectConfig getSettings(Project project) {
+        return project.getService(V1ProjectConfig.class);
     }
 
     public void setDefaults() {
-//        LOGGER.info("*****setDefaults() ");
-        persistentState = new PersistentState();
-        persistentState.background.enabled = true;
-        persistentState.background.red = 173;
-        persistentState.background.green = 46;
-        persistentState.background.blue = 156;
-        backgroundColor = persistentState.getBackgroundColor();
+        LOGGER.debug("***** setDefaults() ");
+        persistentState = new V1ProjectConfig.PersistentState();
         TextAttributes attributes = new TextAttributes();
         attributes.setBackgroundColor(backgroundColor);
         TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(EXTERNAL_ID);
@@ -74,8 +70,8 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
     }
 
     @Override
-    public void loadState(PersistentState persistentState) {
-//        LOGGER.info("*****LOADING " + persistentState);
+    public void loadState(V1ProjectConfig.PersistentState persistentState) {
+        LOGGER.debug("***** loadState() " + persistentState);
         XmlSerializerUtil.copyBean(persistentState, this.persistentState);
         backgroundColor = persistentState.getBackgroundColor();
         updateAttributes(persistentState);
@@ -83,9 +79,8 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
 
     private void rebuildHighlightColorIfNecessary() {
         if (backgroundColor != null) {
-//            LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getBackgroundColor());
             if (persistentState.isBackgroundColorDifferentThan(backgroundColor)) {
-                LOGGER.info("Rebuilding highlight color");
+                LOGGER.debug("***** Rebuilding highlight color");
                 LOGGER.debug("Color changed from  " + backgroundColor + " to " + persistentState);
                 backgroundColor = persistentState.getBackgroundColor();
                 updateAttributes(persistentState);
@@ -93,41 +88,23 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
         }
     }
 
-    public boolean isBackgroundColorUsed() {
-        return persistentState.isBackgroundColorUsed();
-
-    }
-
     public Color getBackgroundColor() {
-//        LOGGER.info("*****getBackgroundColor  " + backgroundColor);
+//        LOGGER.debug("***** getBackgroundColor  " + backgroundColor);
         rebuildHighlightColorIfNecessary();
         return backgroundColor;
     }
 
-    public void storeBackgroundColorInformation(boolean enabled, Color color) {
-//        LOGGER.info("*****SAVE " + enabled + " " + color);
-        this.persistentState.storeBackgroundColorInformation(enabled, color);
-
-        updateAttributesBackgroundColor(enabled, color);
-    }
-
     private void updateAttributes(PersistentState state) {
-//        LOGGER.info("*****updateAttributes(" + state + ")");
+//        LOGGER.debug("***** updateAttributes(" + state + ")");
         attributesDescription.setBackgroundColor(state.getBackgroundColor());
         attributesDescription.setBackgroundChecked(state.isBackgroundColorUsed());
-    }
-
-    private void updateAttributesBackgroundColor(boolean enabled, Color color) {
-//        LOGGER.info("*****UPDATE BG COLOR " + enabled + "" + color);
-        attributesDescription.setBackgroundColor(color);
-        attributesDescription.setBackgroundChecked(enabled);
     }
 
     public HighlightedTabTextAttributesDescription getAttributesDescription() {
         return attributesDescription;
     }
 
-    static class PersistentState {
+    public static class PersistentState {
 
         public PersistentColor background;
         public PersistentColor foreground;
@@ -135,6 +112,10 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
         public PersistentState() {
             background = new PersistentColor();
             foreground = new PersistentColor();
+        }
+
+        public boolean isStatePresent() {
+            return background.getColor() != null || foreground.getColor() != null;
         }
 
         public Color getBackgroundColor() {
@@ -175,7 +156,7 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
         }
     }
 
-    static class PersistentColor {
+    public static class PersistentColor {
         public boolean enabled = false;
         public Integer red;
         public Integer green;
@@ -200,3 +181,4 @@ public class HighlighterSettingsConfig implements PersistentStateComponent<Highl
         }
     }
 }
+

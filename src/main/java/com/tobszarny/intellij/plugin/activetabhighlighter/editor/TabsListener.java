@@ -15,18 +15,14 @@
  *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config;
+package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
 
-import java.util.EventObject;
+import com.intellij.util.messages.Topic;
 
-public class SettingsChangedEvent extends EventObject {
-    /**
-     * Constructs a prototypical Event.
-     *
-     * @param source The object on which the Event initially occurred.
-     * @throws IllegalArgumentException if source is null.
-     */
-    public SettingsChangedEvent(Object source) {
-        super(source);
-    }
+import java.util.EventListener;
+
+public interface TabsListener extends EventListener {
+    Topic<TabsListener> TABS_TOPIC = Topic.create("Highlighter Tabs Topic", TabsListener.class);
+
+    void onTab(TabEvent event);
 }

@@ -1,0 +1,1 @@
+* Enable button keeps revealing everything, but some fields like theme color visibility should depend on "Same color..." checkbox 

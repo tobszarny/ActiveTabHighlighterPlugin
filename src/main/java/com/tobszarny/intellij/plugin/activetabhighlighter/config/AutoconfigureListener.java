@@ -17,16 +17,12 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
-import java.util.EventObject;
+import com.intellij.util.messages.Topic;
 
-public class SettingsChangedEvent extends EventObject {
-    /**
-     * Constructs a prototypical Event.
-     *
-     * @param source The object on which the Event initially occurred.
-     * @throws IllegalArgumentException if source is null.
-     */
-    public SettingsChangedEvent(Object source) {
-        super(source);
-    }
+import java.util.EventListener;
+
+public interface AutoconfigureListener extends EventListener {
+    Topic<AutoconfigureListener> AUTOCONFIGURE_TOPIC = Topic.create("Autoconfigure Topic", AutoconfigureListener.class);
+
+    void fireAutoconfigure();
 }

@@ -17,16 +17,23 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter.config;
 
-import java.util.EventObject;
+import org.apache.commons.lang3.StringUtils;
 
-public class SettingsChangedEvent extends EventObject {
-    /**
-     * Constructs a prototypical Event.
-     *
-     * @param source The object on which the Event initially occurred.
-     * @throws IllegalArgumentException if source is null.
-     */
-    public SettingsChangedEvent(Object source) {
-        super(source);
+import java.awt.Color;
+import java.util.Optional;
+
+public final class ColorUtils {
+    private ColorUtils() {
+    }
+
+    public static Color decodeColor(String color) {
+        return StringUtils.isEmpty(color) ? null :
+                Color.decode(color.replace("#", "0x"));
+    }
+
+    public static String encodeColor(Color color) {
+        return Optional.ofNullable(color)
+                .map(c -> String.format("#%06X", color.getRGB() & 0xFFFFFF))
+                .orElse("");
     }
 }

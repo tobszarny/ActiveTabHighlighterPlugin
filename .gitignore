@@ -1,3 +1,9 @@
-/.idea/
 /build/
 /.gradle/
+/.idea/*
+/.idea/
+/sandboxDirectory/
+/.qodana/
+/.sdkmanrc
+/out/
+/.scannerwork/

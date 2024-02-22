@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright (c) 2023 Tomasz Obszarny
+ *  Copyright (c) 2024 Tomasz Obszarny
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,18 +15,16 @@
  *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config;
+package com.tobszarny.intellij.plugin.activetabhighlighter.editor;
 
-import java.util.EventObject;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.messages.Topic;
 
-public class SettingsChangedEvent extends EventObject {
-    /**
-     * Constructs a prototypical Event.
-     *
-     * @param source The object on which the Event initially occurred.
-     * @throws IllegalArgumentException if source is null.
-     */
-    public SettingsChangedEvent(Object source) {
-        super(source);
-    }
+public interface TabFileEditorListener {
+    @Topic.ProjectLevel
+    Topic<TabFileEditorListener> FILE_EDITOR_EVENT_TOPIC = new Topic<>(TabFileEditorListener.class, Topic.BroadcastDirection.TO_PARENT);
+
+    void unhighlight(VirtualFile file);
+
+    void highlight(VirtualFile file);
 }
