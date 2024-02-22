@@ -52,7 +52,7 @@ public class SettingsGlobalConfig implements PersistentStateComponent<Persistent
     }
 
     public void setDefaults() {
-        LOGGER.warn("***** setDefaults() ");
+        LOGGER.debug("***** setDefaults() ");
         persistentConfig = new PersistentConfig();
         persistentConfig.enabled = true;
         persistentConfig.background = "#AD2E9C";
@@ -70,17 +70,13 @@ public class SettingsGlobalConfig implements PersistentStateComponent<Persistent
 
     @Override
     public void loadState(PersistentConfig persistentState) {
-        LOGGER.warn("***** loadState " + persistentState);
+        LOGGER.debug("***** loadState " + persistentState);
         XmlSerializerUtil.copyBean(persistentState, this.persistentConfig);
         updateAttributes(persistentState);
     }
 
-    private void rebuildHighlightColorIfNecessary() {
-        updateAttributes(persistentConfig);
-    }
-
     private void updateAttributes(PersistentConfig state) {
-        LOGGER.warn("***** updateAttributes(" + state + ")");
+        LOGGER.debug("***** updateAttributes(" + state + ")");
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
         attributesDescription.setBackgroundColor(state.getInferredBackgroundColor());
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
@@ -91,7 +87,7 @@ public class SettingsGlobalConfig implements PersistentStateComponent<Persistent
     }
 
     public void storeConfig(PersistentConfig config) {
-        LOGGER.warn("***** storeConfig(" + config + ")");
+        LOGGER.debug("***** storeConfig(" + config + ")");
         this.persistentConfig.storeConfig(config);
 
         updateAttributes(config);

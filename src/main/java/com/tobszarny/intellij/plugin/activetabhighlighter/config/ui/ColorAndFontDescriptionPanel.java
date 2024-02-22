@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.beans.BeanProperty;
 import java.util.*;
 
 /**
@@ -41,21 +42,17 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     private static final Logger LOGGER = Logger.getInstance(ColorAndFontDescriptionPanel.class);
 
     private final EventDispatcher<Listener> myDispatcher = EventDispatcher.create(Listener.class);
-
-
+    private final Map<String, EffectType> myEffectsMap;
+    private final boolean myUiEventsEnabled = true;
     //region Global Panel
     private JPanel mainPanel;
-    private JBCheckBox enable;
     private JBCheckBox backgroundCheckBox;
     private JCheckBox sameColorAllThemesCheckBox;
     private ColorPanel backgroundChooser;
     private ColorPanel backgroundDarkChooser;
+    //endregion
     private JLabel darkLabel;
     private JLabel lightLabel;
-    //endregion
-
-    private final Map<String, EffectType> myEffectsMap;
-    private final boolean myUiEventsEnabled = true;
 
     {
         Map<String, EffectType> map = new LinkedHashMap();
@@ -74,6 +71,14 @@ public class ColorAndFontDescriptionPanel extends JPanel {
         setBorder(JBUI.Borders.empty(4, 0, 4, 4));
         //noinspection unchecked
         initProjectPanelComponentsBehavior();
+
+//        this.add(mainPanel);
+//        this.add(sameColorAllThemesCheckBox);
+//        this.add(backgroundDarkChooser);
+//        this.add(backgroundChooser);
+//        this.add(backgroundCheckBox);
+//        this.add(darkLabel);
+//        this.add(lightLabel);
     }
 
     private void initProjectPanelComponentsBehavior() {
@@ -96,7 +101,7 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     }
 
     private void updateUi() {
-        LOGGER.warn("Updating UI");
+        LOGGER.debug("***** Updating UI");
         backgroundChooser.setVisible(this.isVisible() && backgroundCheckBox.isSelected());
         backgroundDarkChooser.setVisible(this.isVisible() && backgroundCheckBox.isSelected() && !sameColorAllThemesCheckBox.isSelected());
         lightLabel.setVisible(this.isVisible() && backgroundCheckBox.isSelected() && !sameColorAllThemesCheckBox.isSelected());
@@ -104,16 +109,10 @@ public class ColorAndFontDescriptionPanel extends JPanel {
     }
 
     @Override
-    public void setVisible(boolean aFlag) {
-        super.setVisible(aFlag);
-
-        enable.setVisible(aFlag);
-        backgroundChooser.setVisible(aFlag);
-        backgroundDarkChooser.setVisible(aFlag);
-        lightLabel.setVisible(aFlag);
-        darkLabel.setVisible(aFlag);
-        sameColorAllThemesCheckBox.setVisible(aFlag);
-        backgroundCheckBox.setVisible(aFlag);
+    @BeanProperty(hidden = true, visualUpdate = true)
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        mainPanel.setVisible(visible);
     }
 
     public boolean isModified(PersistentStateComponent<PersistentConfig> globalConfig) {
@@ -123,13 +122,7 @@ public class ColorAndFontDescriptionPanel extends JPanel {
             return false;
         }
 
-        boolean modified = !Objects.equals(state.isEnabled(), enable.isSelected());
-
-        if (enable.isSelected()) {
-            modified = modified || checkChanges(state);
-        }
-
-        return modified;
+        return checkChanges(state);
     }
 
     private boolean checkChanges(PersistentConfig state) {
@@ -154,21 +147,12 @@ public class ColorAndFontDescriptionPanel extends JPanel {
             return;
         }
 
-        enable.setSelected(persistentConfig.isEnabled());
         backgroundCheckBox.setSelected(persistentConfig.isBackgroundEnabled());
         sameColorAllThemesCheckBox.setSelected(persistentConfig.isAcrossThemes());
         backgroundChooser.setSelectedColor(persistentConfig.getBackgroundColor());
         backgroundDarkChooser.setSelectedColor(persistentConfig.getBackgroundDarkColor());
 
         updateUi();
-    }
-
-    interface Listener extends EventListener {
-
-        void onSettingsChanged(@NotNull ActionEvent e);
-
-        void onHyperLinkClicked(@NotNull HyperlinkEvent e);
-
     }
 
     public boolean isSameColorAllThemesCheckBoxSelected() {
@@ -185,6 +169,14 @@ public class ColorAndFontDescriptionPanel extends JPanel {
 
     public Color getBackgroundDarkChooserColor() {
         return this.backgroundDarkChooser.getSelectedColor();
+    }
+
+    interface Listener extends EventListener {
+
+        void onSettingsChanged(@NotNull ActionEvent e);
+
+        void onHyperLinkClicked(@NotNull HyperlinkEvent e);
+
     }
 
 

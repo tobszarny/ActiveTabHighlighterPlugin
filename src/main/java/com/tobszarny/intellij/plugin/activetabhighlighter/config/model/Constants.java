@@ -21,7 +21,10 @@ public final class Constants {
     public static final String GROUP = "Highlighter";
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
     public static final String ACTIVE_TAB_HIGHLIGHTER_CONFIG_OS_XML = "active-tab-highlighter-global-v2.xml";
-    public static final String ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML = "active-tab-highlighter-v2.xml";
+    public static final String ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML_V2 = "active-tab-highlighter-v2.xml";
+    public static final String ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML = "active-tab-highlighter.xml";
+
+    public static final String PRESENT_MIGRATION_VERSION = "v2";
 
     private Constants() {
     }

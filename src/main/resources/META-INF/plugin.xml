@@ -40,10 +40,11 @@
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-         Startup
         <postStartupActivity implementation="com.tobszarny.intellij.plugin.activetabhighlighter.ActiveTabHighlighterStartupActivity"/>
 
-        <vfs.asyncListener implementation="com.tobszarny.intellij.plugin.activetabhighlighter.Listener" />
+        <vfs.asyncListener implementation="com.tobszarny.intellij.plugin.activetabhighlighter.AsyncFileListenerImpl" />
+
+        <project.converterProvider implementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.migration.V2ConverterProvider" />
 
 
         <editorTabColorProvider
@@ -51,15 +52,21 @@
 
         <projectConfigurable groupId="tools" displayName="Active Tab Highlighter"
                              id="preference.HighlighterSettingsProjectConfigurable"
-                             instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsConfigurable"/>
+                             instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.controller.SettingsConfigurable"/>
+
+        <!-- Legacy V1 project config used for migration -->
+        <projectService
+                serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.legacy.V1ProjectConfig"/>
+
+        <!-- New V2 project config-->
         <projectService
                 serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsProjectConfig"/>
 
-        <!--        <applicationConfigurable parentId="tools" instance="com.tobszarny.intellij.plugin.activetabhighlighter.config.HighlighterSettingsGlobalConfigurable"-->
-        <!--                                 id="preference.HighlighterSettingsGlobalConfigurable" displayName="Active Tab Highlighter Plugin"/>-->
         <applicationService
                 serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsGlobalConfig"/>
-        <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsConfig"/>
+        <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.config.controller.SettingsConfigService"/>
+        <projectService serviceImplementation="com.tobszarny.intellij.plugin.activetabhighlighter.editor.TabUpdateService"/>
+
 
     </extensions>
 

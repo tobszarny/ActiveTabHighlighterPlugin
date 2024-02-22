@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.tobszarny.intellij.plugin.activetabhighlighter.config.model;
+package com.tobszarny.intellij.plugin.activetabhighlighter.config.controller;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -24,9 +24,11 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.TabTextAttributesDescription;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangeListener;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.SettingsChangedEvent;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.PersistentConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsGlobalConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsProjectConfig;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.ui.TabColorAndFontDescriptionPanel;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +38,9 @@ import javax.swing.*;
 
 public class SettingsConfigurable implements SearchableConfigurable {
 
-    private static final Logger LOGGER = Logger.getInstance(SettingsConfigurable.class);
-
     public static final String PREFERENCE_HIGHLIGHTER_SETTINGS_CONFIGURABLE = "preference.SettingsConfigurable";
     public static final String ACTIVE_TAB_HIGHLIGHTER_PLUGIN_DISPLAY_NAME = "Active Tab Highlighter Plugin";
+    private static final Logger LOGGER = Logger.getInstance(SettingsConfigurable.class);
     private final SettingsGlobalConfig globalConfig;
     private final SettingsProjectConfig projectConfig;
     private final EditorColorsScheme editorColorsScheme;
@@ -49,7 +50,7 @@ public class SettingsConfigurable implements SearchableConfigurable {
     private TabColorAndFontDescriptionPanel tabColorAndFontDescriptionPanel;
 
     public SettingsConfigurable(Project project) {
-        LOGGER.warn("***** SettingsConfigurable() ");
+        LOGGER.debug("***** SettingsConfigurable() ");
         myProject = project;
         globalConfig = SettingsGlobalConfig.getSettings();
         projectConfig = SettingsProjectConfig.getSettings(project);
@@ -57,7 +58,7 @@ public class SettingsConfigurable implements SearchableConfigurable {
         bus = ApplicationManager.getApplication().getMessageBus();
     }
 
-    //TODO: Make this class replace function of  inferring properties currently hosted by SettingsConfig
+    //TODO: Make this class replace function of  inferring properties currently hosted by SettingsConfigService
 
     @NotNull
     @Override
@@ -86,27 +87,22 @@ public class SettingsConfigurable implements SearchableConfigurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        LOGGER.warn("***** createComponent() ");
-//        TextAttributes attributes = new TextAttributes();
-//        attributes.setBackgroundColor(config.getBackgroundColor());
-//        attributes.setFontType(Font.PLAIN);
-//        attributes.setEffectType(EffectType.BOXED);
+        LOGGER.debug("***** createComponent() ");
         tabColorAndFontDescriptionPanel = new TabColorAndFontDescriptionPanel();
         primeComponent();
-//        tabColorAndFontDescriptionPanel.primeVisibilityAndBehavior();
         return tabColorAndFontDescriptionPanel.getPanel();
     }
 
     private void primeComponent() {
         // TODO: this may be obsolete when todo below are done, as reset will prime the component
-        tabColorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.persistentConfig);
-        tabColorAndFontDescriptionPanel.primeProjectPanel(projectConfig.persistentConfig);
+        tabColorAndFontDescriptionPanel.primeGlobalPanel(globalConfig.getState());
+        tabColorAndFontDescriptionPanel.primeProjectPanel(projectConfig.getState());
     }
 
     @Override
     public boolean isModified() {
-        LOGGER.warn("***** isModified() ");
-        TabTextAttributesDescription attributesDescription = projectConfig.getAttributesDescription();
+        LOGGER.debug("***** isModified() ");
+//        TabTextAttributesDescription attributesDescription = projectConfig.getAttributesDescription();
 
 //        colorAndFontDescriptionPanel.is
         return tabColorAndFontDescriptionPanel.anyModified(globalConfig, projectConfig);
@@ -114,7 +110,7 @@ public class SettingsConfigurable implements SearchableConfigurable {
 
     @Override
     public void apply() {
-        LOGGER.warn("***** apply() ");
+        LOGGER.debug("***** apply() ");
 //        settingsGUI.apply();
 
         bus.syncPublisher(SettingsChangeListener.CHANGE_HIGHLIGHTER_SETTINGS_TOPIC).beforeSettingsChanged(new SettingsChangedEvent(this));
@@ -122,10 +118,10 @@ public class SettingsConfigurable implements SearchableConfigurable {
         globalConfig.storeConfig(tabColorAndFontDescriptionPanel.generateGlobalConfig());
         projectConfig.storeConfig(tabColorAndFontDescriptionPanel.generateProjectConfig());
 
-        //TODO: calculate attributesDescription here
+        // TODO: calculate attributesDescription here
 
         PersistentConfig attributesDescription = effectiveConfig(
-                globalConfig.persistentConfig, projectConfig.persistentConfig);
+                globalConfig.getState(), projectConfig.getState());
 
 //        colorAndFontDescriptionPanel.apply(colorAndFontDescriptionPanel.generateGlobalConfig()., editorColorsScheme);
 
@@ -153,12 +149,12 @@ public class SettingsConfigurable implements SearchableConfigurable {
     @Override
     public void reset() {
         //FIXME: this breaks the coloring, called immediately after opening the dialog
-//        colorAndFontDescriptionPanel.reset(projectConfig.getAttributesDescription());
+//        colorAndFontDescriptionPanel.reset(projectConfig.getAttributesDescription());``
     }
 
 //    @Override
 //    public void disposeUIResources() {
-//        LOGGER.warn("***** disposeUIResources() ");
+//        LOGGER.debug("***** disposeUIResources() ");
 //        colorAndFontDescriptionPanel = null;
 //    }
 

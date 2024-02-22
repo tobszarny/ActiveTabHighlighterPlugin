@@ -50,27 +50,22 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
     private static final Logger LOGGER = Logger.getInstance(TabColorAndFontDescriptionPanel.class);
 
     private final EventDispatcher<Listener> myDispatcher = EventDispatcher.create(Listener.class);
-
+    private final Map<String, EffectType> myEffectsMap;
+    private final boolean myUiEventsEnabled = true;
     private JPanel mainPanel;
-
-
     //region Global Panel
     private JPanel globalPanel;
-    private JBCheckBox enableJBCheckBox;
-    private JLabel globalLabel;
-    private ColorAndFontDescriptionPanel globalColorAndFontDescriptionPanel;
+    private JBCheckBox globalConfigEnableJBCheckBox;
 
     //endregion
-
+    private JLabel globalLabel;
+    private ColorAndFontDescriptionPanel globalColorAndFontDescriptionPanel;
     //region Project Panel
     private JPanel projectPanel;
     private JLabel projectPrivateLabel;
+    //endregion
     private JBCheckBox projectOverrideJBCheckBox;
     private ColorAndFontDescriptionPanel projectColorAndFontDescriptionPanel;
-    //endregion
-
-    private final Map<String, EffectType> myEffectsMap;
-    private final boolean myUiEventsEnabled = true;
 
     {
         Map<String, EffectType> map = new LinkedHashMap();
@@ -98,31 +93,6 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
         //noinspection unchecked
     }
 
-    private void initPanelComponentsBehavior() {
-        enableJBCheckBox.addActionListener(e -> {
-            globalColorAndFontDescriptionPanel.setVisible(enableJBCheckBox.isSelected());
-            projectColorAndFontDescriptionPanel.setVisible(enableJBCheckBox.isSelected());
-            globalLabel.setVisible(enableJBCheckBox.isSelected());
-            projectPrivateLabel.setVisible(enableJBCheckBox.isSelected());
-            projectOverrideJBCheckBox.setVisible(enableJBCheckBox.isSelected());
-
-            if (myUiEventsEnabled) {
-                myDispatcher.getMulticaster().onSettingsChanged(e);
-            }
-        });
-
-
-        projectOverrideJBCheckBox.addActionListener(e -> {
-            projectColorAndFontDescriptionPanel.setVisible(projectOverrideJBCheckBox.isSelected());
-            projectPrivateLabel.setVisible(projectOverrideJBCheckBox.isSelected());
-
-            if (myUiEventsEnabled) {
-                myDispatcher.getMulticaster().onSettingsChanged(e);
-            }
-        });
-
-    }
-
     private static void updateColorChooser(JCheckBox checkBox,
                                            ColorPanel colorPanel,
                                            boolean isEnabled,
@@ -136,6 +106,31 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
             colorPanel.setSelectedColor(JBColor.WHITE);
         }
         colorPanel.setEnabled(isChecked);
+    }
+
+    private void initPanelComponentsBehavior() {
+        globalConfigEnableJBCheckBox.addActionListener(e -> {
+            globalColorAndFontDescriptionPanel.setVisible(globalConfigEnableJBCheckBox.isSelected());
+            projectColorAndFontDescriptionPanel.setVisible(globalConfigEnableJBCheckBox.isSelected() && projectOverrideJBCheckBox.isSelected());
+            globalLabel.setVisible(globalConfigEnableJBCheckBox.isSelected());
+            projectPrivateLabel.setVisible(globalConfigEnableJBCheckBox.isSelected());
+            projectOverrideJBCheckBox.setVisible(globalConfigEnableJBCheckBox.isSelected());
+
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
+
+        projectOverrideJBCheckBox.addActionListener(e -> {
+            projectColorAndFontDescriptionPanel.setVisible(globalConfigEnableJBCheckBox.isSelected() && projectOverrideJBCheckBox.isSelected());
+            projectPrivateLabel.setVisible(globalConfigEnableJBCheckBox.isSelected() && projectOverrideJBCheckBox.isSelected());
+
+            if (myUiEventsEnabled) {
+                myDispatcher.getMulticaster().onSettingsChanged(e);
+            }
+        });
+
     }
 
     @NotNull
@@ -174,7 +169,7 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
 
     public PersistentConfig generateGlobalConfig() {
         return PersistentConfig.builder()
-                .enabled(enableJBCheckBox.isSelected())
+                .enabled(globalConfigEnableJBCheckBox.isSelected())
                 .acrossThemes(globalColorAndFontDescriptionPanel.isSameColorAllThemesCheckBoxSelected())
                 .backgroundEnabled(globalColorAndFontDescriptionPanel.isBackgroundCheckBoxSelected())
                 .backgroundFromColor(globalColorAndFontDescriptionPanel.getBackgroundChooserColor())
@@ -193,14 +188,21 @@ public class TabColorAndFontDescriptionPanel extends JPanel {
     }
 
     public boolean anyModified(SettingsGlobalConfig globalConfig, SettingsProjectConfig projectConfig) {
-        return globalColorAndFontDescriptionPanel.isModified(globalConfig) || projectColorAndFontDescriptionPanel.isModified(projectConfig);
+        boolean modified = globalConfigEnableJBCheckBox.isSelected() != globalConfig.getState().isEnabled();
+        modified = modified || (projectOverrideJBCheckBox.isSelected() != projectConfig.getState().isEnabled());
+        modified = modified || globalColorAndFontDescriptionPanel.isModified(globalConfig);
+        modified = modified || projectColorAndFontDescriptionPanel.isModified(projectConfig);
+
+        return modified;
     }
 
     public void primeGlobalPanel(PersistentConfig persistentConfig) {
+        globalConfigEnableJBCheckBox.setSelected(persistentConfig.isEnabled());
         globalColorAndFontDescriptionPanel.primePanel(persistentConfig);
     }
 
     public void primeProjectPanel(PersistentConfig persistentConfig) {
+        projectOverrideJBCheckBox.setSelected(persistentConfig.isEnabled());
         projectColorAndFontDescriptionPanel.primePanel(persistentConfig);
     }
 

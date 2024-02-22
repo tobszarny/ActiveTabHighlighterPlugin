@@ -27,13 +27,14 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.Constants;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 @State(name = "ActiveTabHighlighterConfiguration",
         storages = {
-                @Storage("active-tab-highlighter.xml")
+                @Storage(Constants.ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML)
         })
 public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig.PersistentState> {
 
@@ -41,7 +42,7 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
     public static final String EXTERNAL_ID = "HIGHLIGHTER_TAB";
     private static final Logger LOGGER = Logger.getInstance(V1ProjectConfig.class);
     public HighlightedTabTextAttributesDescription attributesDescription;
-    PersistentState persistentState;
+    V1ProjectConfig.PersistentState persistentState;
     private Color backgroundColor;
 
     public V1ProjectConfig() {
@@ -54,13 +55,8 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
     }
 
     public void setDefaults() {
-//        LOGGER.info("*****setDefaults() ");
-        persistentState = new PersistentState();
-        persistentState.background.enabled = true;
-        persistentState.background.red = 173;
-        persistentState.background.green = 46;
-        persistentState.background.blue = 156;
-        backgroundColor = persistentState.getBackgroundColor();
+        LOGGER.debug("***** setDefaults() ");
+        persistentState = new V1ProjectConfig.PersistentState();
         TextAttributes attributes = new TextAttributes();
         attributes.setBackgroundColor(backgroundColor);
         TextAttributesKey textAttributesKey = TextAttributesKey.createTextAttributesKey(EXTERNAL_ID);
@@ -74,8 +70,8 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
     }
 
     @Override
-    public void loadState(PersistentState persistentState) {
-//        LOGGER.info("*****LOADING " + persistentState);
+    public void loadState(V1ProjectConfig.PersistentState persistentState) {
+        LOGGER.debug("***** loadState() " + persistentState);
         XmlSerializerUtil.copyBean(persistentState, this.persistentState);
         backgroundColor = persistentState.getBackgroundColor();
         updateAttributes(persistentState);
@@ -83,9 +79,8 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
 
     private void rebuildHighlightColorIfNecessary() {
         if (backgroundColor != null) {
-//            LOGGER.info("*****REBUILDING COLOUR  " + attributesDescription.getBackgroundColor());
             if (persistentState.isBackgroundColorDifferentThan(backgroundColor)) {
-                LOGGER.info("Rebuilding highlight color");
+                LOGGER.debug("***** Rebuilding highlight color");
                 LOGGER.debug("Color changed from  " + backgroundColor + " to " + persistentState);
                 backgroundColor = persistentState.getBackgroundColor();
                 updateAttributes(persistentState);
@@ -93,41 +88,23 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
         }
     }
 
-    public boolean isBackgroundColorUsed() {
-        return persistentState.isBackgroundColorUsed();
-
-    }
-
     public Color getBackgroundColor() {
-//        LOGGER.info("*****getBackgroundColor  " + backgroundColor);
+//        LOGGER.debug("***** getBackgroundColor  " + backgroundColor);
         rebuildHighlightColorIfNecessary();
         return backgroundColor;
     }
 
-    public void storeBackgroundColorInformation(boolean enabled, Color color) {
-//        LOGGER.info("*****SAVE " + enabled + " " + color);
-        this.persistentState.storeBackgroundColorInformation(enabled, color);
-
-        updateAttributesBackgroundColor(enabled, color);
-    }
-
     private void updateAttributes(PersistentState state) {
-//        LOGGER.info("*****updateAttributes(" + state + ")");
+//        LOGGER.debug("***** updateAttributes(" + state + ")");
         attributesDescription.setBackgroundColor(state.getBackgroundColor());
         attributesDescription.setBackgroundChecked(state.isBackgroundColorUsed());
-    }
-
-    private void updateAttributesBackgroundColor(boolean enabled, Color color) {
-//        LOGGER.info("*****UPDATE BG COLOR " + enabled + "" + color);
-        attributesDescription.setBackgroundColor(color);
-        attributesDescription.setBackgroundChecked(enabled);
     }
 
     public HighlightedTabTextAttributesDescription getAttributesDescription() {
         return attributesDescription;
     }
 
-    static class PersistentState {
+    public static class PersistentState {
 
         public PersistentColor background;
         public PersistentColor foreground;
@@ -135,6 +112,10 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
         public PersistentState() {
             background = new PersistentColor();
             foreground = new PersistentColor();
+        }
+
+        public boolean isStatePresent() {
+            return background.getColor() != null || foreground.getColor() != null;
         }
 
         public Color getBackgroundColor() {
@@ -175,7 +156,7 @@ public class V1ProjectConfig implements PersistentStateComponent<V1ProjectConfig
         }
     }
 
-    static class PersistentColor {
+    public static class PersistentColor {
         public boolean enabled = false;
         public Integer red;
         public Integer green;

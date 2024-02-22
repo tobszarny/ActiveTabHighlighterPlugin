@@ -31,9 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-@State(name = "ActiveTabHighlighterConfiguration",
+@State(name = "ActiveTabHighlighterConfigurationV2",
         storages = {
-                @Storage(Constants.ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML)
+                @Storage(Constants.ACTIVE_TAB_HIGHLIGHTER_CONFIG_PROJECT_XML_V2)
         })
 public class SettingsProjectConfig implements PersistentStateComponent<PersistentConfig> {
 
@@ -51,7 +51,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
     }
 
     public void setDefaults() {
-        LOGGER.warn("***** setDefaults() ");
+        LOGGER.debug("***** setDefaults() ");
         persistentConfig = new PersistentConfig();
         persistentConfig.enabled = true;
         persistentConfig.background = "#AD2E9C";
@@ -69,7 +69,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
 
     @Override
     public void loadState(PersistentConfig persistentState) {
-        LOGGER.warn("***** loadState " + persistentState);
+        LOGGER.debug("***** loadState " + persistentState);
         XmlSerializerUtil.copyBean(persistentState, this.persistentConfig);
         updateAttributes(persistentState);
     }
@@ -79,7 +79,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
     }
 
     private void updateAttributes(PersistentConfig state) {
-        LOGGER.warn("***** updateAttributes(" + state + ")");
+        LOGGER.debug("***** updateAttributes(" + state + ")");
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
         attributesDescription.setBackgroundColor(state.getInferredBackgroundColor());
         attributesDescription.setBackgroundChecked(state.isBackgroundEnabled());
@@ -90,7 +90,7 @@ public class SettingsProjectConfig implements PersistentStateComponent<Persisten
     }
 
     public void storeConfig(PersistentConfig config) {
-        LOGGER.warn("***** storeConfig(" + config + ")");
+        LOGGER.debug("***** storeConfig(" + config + ")");
         this.persistentConfig.storeConfig(config);
 
         updateAttributes(config);

@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.FileColorManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.ui.EDT;
-import com.tobszarny.intellij.plugin.activetabhighlighter.config.model.SettingsConfig;
+import com.tobszarny.intellij.plugin.activetabhighlighter.config.controller.SettingsConfigService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,20 +59,13 @@ public class CustomEditorTabColorProvider implements EditorTabColorProvider, Dum
         }
 
         LOGGER.warn(String.format("EDT getEditorTabColor(%s, %s)", project.getName(), virtualFile.getName()));
-
-//        final FileEditorManagerEx fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project);
-        SettingsConfig settingsConfig = SettingsConfig.getSettings(project); //FIXME: just project settings?
-
+        final SettingsConfigService settingsConfigService = SettingsConfigService.getSettingsConfigService(project);
         final FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        final FileEditor selectedEditor = fileEditorManager.getSelectedEditor(virtualFile);
 
-        String file = virtualFile.getCanonicalPath();
-
-        FileEditor selectedEditor;
-        selectedEditor = fileEditorManager.getSelectedEditor(virtualFile);
-
-        if (selectedEditor != null && settingsConfig.isEnabled()) {
+        if (selectedEditor != null && settingsConfigService.isEnabled()) {
             if (virtualFile.equals(selectedEditor.getFile())) {
-                return settingsConfig.getBackgroundColor();
+                return settingsConfigService.getBackgroundColorOptional().orElse(fileColorManager.getFileColor(virtualFile));
             }
         }
 

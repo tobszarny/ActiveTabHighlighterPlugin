@@ -24,11 +24,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Listener implements com.intellij.openapi.vfs.AsyncFileListener{
-    private static final Logger LOGGER = Logger.getInstance(Listener.class);
+public class AsyncFileListenerImpl implements com.intellij.openapi.vfs.AsyncFileListener{
+    private static final Logger LOGGER = Logger.getInstance(AsyncFileListenerImpl.class);
     @Override
     public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
-        LOGGER.warn("prepareChange()");
+        LOGGER.debug("***** prepareChange()");
+        // TabUpdateService.getTabUpdateService().update(SettingsConfigService.getSettingsConfigService());
         return null;
     }
 }

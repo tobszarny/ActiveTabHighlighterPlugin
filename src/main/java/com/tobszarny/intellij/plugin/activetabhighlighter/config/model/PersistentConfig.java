@@ -17,10 +17,11 @@
 
 package com.tobszarny.intellij.plugin.activetabhighlighter.config.model;
 
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import com.tobszarny.intellij.plugin.activetabhighlighter.config.ColorUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.awt.*;
 import java.util.Optional;
@@ -30,9 +31,12 @@ import java.util.Optional;
 public
 class PersistentConfig {
 
+    @Getter
     public boolean enabled;
+    @Getter
     public boolean acrossThemes;
 
+    @Getter
     public boolean backgroundEnabled;
     public String background;
     public String backgroundDark;
@@ -40,18 +44,9 @@ class PersistentConfig {
     public boolean foregroundEnabled;
     public String foreground;
 
+    public String migration;
+
     public PersistentConfig() {
-//        background = new PersistentColor();
-//        backgroundDark = new PersistentColor();
-//        foreground = new PersistentColor();
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public boolean isAcrossThemes() {
-        return acrossThemes;
     }
 
     public Color getBackgroundDarkColor() {
@@ -62,15 +57,12 @@ class PersistentConfig {
         return ColorUtils.decodeColor(background);
     }
 
-    public boolean isBackgroundEnabled() {
-        return backgroundEnabled;
-    }
-
     public Color getInferredBackgroundColor() {
         if (acrossThemes)
             return ColorUtils.decodeColor(background);
 
-        return UIUtil.isUnderDarcula() ? Optional.ofNullable(backgroundDark).map(ColorUtils::decodeColor).orElse(null) :
+
+        return StartupUiUtil.isUnderDarcula() ? Optional.ofNullable(backgroundDark).map(ColorUtils::decodeColor).orElse(null) :
                 Optional.ofNullable(background).map(ColorUtils::decodeColor).orElse(null);
     }
 
@@ -78,26 +70,6 @@ class PersistentConfig {
         return ColorUtils.decodeColor(foreground);
     }
 
-/*    public void storeBackgroundColorInformation(boolean enabled, Color color, Color colorDark) {
-        backgroundEnabled = enabled;
-        if (enabled) {
-            if (color == null) {
-                throw new NullPointerException("Color cannot be null when enabled");
-            } else {
-                background = PersistentColor.builder().fromColor(color).build();
-            }
-
-            if (colorDark == null) {
-                throw new NullPointerException("Color cannot be null when enabled");
-            } else {
-                backgroundDark = PersistentColor.builder().fromColor(colorDark).build();
-            }
-        }
-    }
-
-    public boolean isBackgroundColorDifferentThan(Color color) {
-        return !background.toColor().equals(color);
-    }*/
 
     @Override
     public String toString() {
@@ -112,10 +84,12 @@ class PersistentConfig {
         this.acrossThemes = config.acrossThemes;
         this.backgroundEnabled = config.backgroundEnabled;
         this.background = config.background;
+        this.backgroundDark = config.backgroundDark;
         this.foreground = config.foreground;
-
+        this.migration = config.migration;
     }
 
+    @SuppressWarnings("unused")
     public static class PersistentConfigBuilder {
         public PersistentConfigBuilder backgroundFromColor(Color from) {
             background = ColorUtils.encodeColor(from);

@@ -5,3 +5,5 @@
 /sandboxDirectory/
 /.qodana/
 /.sdkmanrc
+/out/
+/.scannerwork/

@@ -37,7 +37,7 @@ public class TabsListenerImpl implements TabsListener{
 
     @Override
     public void onTab(TabEvent event) {
-        LOGGER.warn("onTab");
+        LOGGER.debug("***** onTab");
         final FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         ApplicationManager.getApplication().runWriteAction(() -> {
             FileEditor selectedEditor = fileEditorManager.getSelectedEditor((VirtualFile)event.getSource());
