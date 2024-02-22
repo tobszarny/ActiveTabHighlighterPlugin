@@ -34,7 +34,7 @@ public class TabTextAttributesDescription extends TextAttributesDescription {
 
     @Override
     public boolean isErrorStripeEnabled() {
-        return TOGGLE;
+        return true;
     }
 
 
