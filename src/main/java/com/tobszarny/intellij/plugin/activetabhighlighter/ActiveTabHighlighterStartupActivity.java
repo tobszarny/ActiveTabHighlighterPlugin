@@ -48,11 +48,6 @@ public class ActiveTabHighlighterStartupActivity implements ProjectActivity, Dum
 
     private MessageBusConnection connection;
 
-    @Override
-    public void appStarted() {
-        LOGGER.debug("***** appStarted()");
-    }
-
     private void init(Project project) {
         LOGGER.debug("***** Initializing component");
         MessageBus bus = ApplicationManager.getApplication().getMessageBus();
