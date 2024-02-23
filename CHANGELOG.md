@@ -2,6 +2,12 @@
 
 # Changelog
 
+## [2.0.1] - Feb 23, 2024
+
+### Fixed
+
+- Settings freeze fixed  
+
 ## [2.0.0] - Feb 22, 2024
 
 ### Changed
